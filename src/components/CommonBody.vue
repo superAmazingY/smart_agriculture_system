@@ -3,19 +3,34 @@
     <el-col :span="8"><div class="grid-content bg-purple">
       <el-card class="box-card">
         <div class="user">
-          <img src="../assets/logo.png" alt="">
+          <img src="../assets/rice.jpg" alt="">
           <div class="userinfo">
-            <p class="name">Admin</p>
+            <p class="name">智能农业管理</p>
             <p class="access">超级管理员</p>
           </div>
         </div>
         <div class="login-info">
-          <p>上次登录时间：<span>2023-1-28</span></p>
+          <p>上次登录时间：<span>{{ time }}</span></p>
           <p>上次登录地点：<span>重庆</span></p>
         </div>
       </el-card>
       <el-card class="box-card" style="height: 345px">
-        <p>异常数据分析</p>
+        <template>
+          <el-table
+              :data="tableData"
+              style="width: 100%">
+            <el-table-column
+                prop="date"
+                label="日期"
+                width="210">
+            </el-table-column>
+            <el-table-column
+                prop="cause"
+                label="错误提示"
+                width="190">
+            </el-table-column>
+          </el-table>
+        </template>
       </el-card>
       </div></el-col>
     <el-col :span="16"><div class="grid-content bg-purple-light">
@@ -36,7 +51,37 @@
 
 <script>
 export default {
-
+  data() {
+    return {
+      //后期修改为json数据
+      tableData: [{
+        date: '2023-01-02',
+        cause: 'PH值过高',
+      }, {
+        date: '2023-01-04',
+        cause: '温度过低',
+      }, {
+        date: '2023-01-05',
+        cause: '钾含量过高',
+      }, {
+        date: '2023-01-07',
+        cause: '氮含量过低',
+      }],
+      time:this.getNowDate()
+    };
+  },
+  methods:{
+    //获取当前系统时间
+    getNowDate(){
+      const timeOne = new Date()
+      const year = timeOne.getFullYear()
+      let month = timeOne.getMonth() + 1
+      let day = timeOne.getDate()
+      month = month < 10 ? '0' + month : month
+      day = day < 10 ? '0' + day : day
+      return `${year}-${month}-${day}`
+    }
+  }
 }
 </script>
 

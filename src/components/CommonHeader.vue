@@ -5,7 +5,7 @@
     <div class="r-content">
       <el-dropdown>
           <span class="el-dropdown-link">
-            <img class="user" src="../assets/logo.png">
+            <img class="user" src="../assets/rice.jpg">
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>设置</el-dropdown-item>
