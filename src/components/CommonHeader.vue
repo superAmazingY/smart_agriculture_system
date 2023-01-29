@@ -5,9 +5,9 @@
     <div class="r-content">
       <el-dropdown>
           <span class="el-dropdown-link">
-            <img class="user" src="../assets/rice.jpg">
+            <img class="user" src="../assets/rice.jpg" alt="">
           </span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu>
             <el-dropdown-item>设置</el-dropdown-item>
             <el-dropdown-item>退出</el-dropdown-item>
           </el-dropdown-menu>
