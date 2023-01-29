@@ -35,13 +35,13 @@
       </div></el-col>
     <el-col :span="16"><div class="grid-content bg-purple-light">
       <el-card class="box-card" style="height: 210px">
-        <p>温度折线图</p>
+        <Temperature></Temperature>
       </el-card>
       <el-card class="box-card" style="height: 210px">
-        <p>氮磷钾折线图</p>
+        <Azophoska></Azophoska>
       </el-card>
       <el-card class="box-card" style="height: 210px">
-        <p>PH值折线图</p>
+        <PHvalue></PHvalue>
       </el-card>
 
     </div></el-col>
@@ -50,7 +50,15 @@
 </template>
 
 <script>
+import Temperature from "@/components/Temperature.vue";
+import PHvalue from "@/components/PHvalue.vue";
+import Azophoska from "@/components/Azophoska.vue";
 export default {
+  components:{
+    Temperature,
+    PHvalue,
+    Azophoska
+  },
   data() {
     return {
       //后期修改为json数据
@@ -119,5 +127,4 @@ export default {
     }
   }
 }
-
 </style>
