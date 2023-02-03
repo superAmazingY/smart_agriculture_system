@@ -43,7 +43,6 @@
       <el-card class="box-card" style="height: 210px">
         <PHvalue></PHvalue>
       </el-card>
-
     </div></el-col>
   </el-row>
 
@@ -57,7 +56,8 @@ export default {
   components:{
     Temperature,
     PHvalue,
-    Azophoska
+    Azophoska,
+    Test
   },
   data() {
     return {

@@ -55,7 +55,6 @@
 
 
 <script>
-import { mapMutations } from "vuex";
 
 export default {
   data: function () {
@@ -72,7 +71,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["changeLogin"]),
     submitForm() {
       const userAccount = this.loginForm.account;
       const userPassword = this.loginForm.passWord;
@@ -88,6 +86,7 @@ export default {
           message: "密码不能为空！",
         });
       }
+      //校验token
       console.log("用户输入的账号为：", userAccount);
       console.log("用户输入的密码为：", userPassword);
 
@@ -97,7 +96,7 @@ export default {
 </script>
 
 
-<style scoped>
+<style scoped lang="less">
 .login {
   width: 100vw;
   padding: 0;
@@ -109,25 +108,24 @@ export default {
   color: #fff;
   font-family: "Source Sans Pro";
   position: relative;
-}
-
-.mylogin {
-  width: 240px;
-  height: 280px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  padding: 50px 40px 40px 40px;
-  box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.7);
-  opacity: 1;
-  background: linear-gradient(
-      230deg,
-      rgba(53, 57, 74, 0) 0%,
-      rgb(0, 0, 0) 100%
-  );
+  .mylogin {
+    width: 240px;
+    height: 280px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    padding: 50px 40px 40px 40px;
+    box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.7);
+    opacity: 1;
+    background: linear-gradient(
+        230deg,
+        rgba(53, 57, 74, 0) 0%,
+        rgb(0, 0, 0) 100%
+    );
+  }
 }
 
 .inps input {
