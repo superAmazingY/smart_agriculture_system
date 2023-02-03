@@ -68,13 +68,18 @@ export default {
           temperatureValue: Math.random() * 100,
           humidityValue: Math.random() * 100,
         },
+        {
+          time: '2023-01-05',
+          temperatureValue: Math.random() * 100,
+          humidityValue: Math.random() * 100,
+        },
       ]
     }
   },
   created() {
     setInterval(() => {
       this.data = this.getRandomData();
-    }, 1000)
+    }, 2000)
   }
 }
 </script>

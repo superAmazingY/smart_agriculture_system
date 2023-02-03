@@ -59,13 +59,17 @@ export default {
           time: '2023-01-04',
           value: Math.random() * 100,
         },
+        {
+          time: '2023-01-05',
+          value: Math.random() * 100,
+        },
       ]
     }
   },
   created() {
     setInterval(() => {
       this.data = this.getRandomData();
-    }, 1000)
+    }, 2000)
   }
 }
 </script>

@@ -77,13 +77,19 @@ export default {
           phosphorusValue:Math.random()*100,
           potassiumValue:Math.random()*100,
         },
+        {
+          time:'2023-01-05',
+          nitrogenValue:Math.random()*100,
+          phosphorusValue:Math.random()*100,
+          potassiumValue:Math.random()*100,
+        },
       ]
     }
   },
   created() {
     setInterval(() => {
       this.data = this.getRandomData();
-    },1000)
+    },2000)
   }
 }
 </script>
