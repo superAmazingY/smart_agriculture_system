@@ -57,7 +57,6 @@ export default {
     Temperature,
     PHvalue,
     Azophoska,
-    Test
   },
   data() {
     return {
