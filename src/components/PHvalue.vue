@@ -69,7 +69,7 @@ export default {
   created() {
     setInterval(() => {
       this.data = this.getRandomData();
-    }, 2000)
+    }, 500)
   }
 }
 </script>

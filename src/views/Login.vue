@@ -5,7 +5,7 @@
       <el-form
           :model="loginForm"
           :rules="loginRules"
-          ref="loginForm"
+          ref="registerForm"
           label-width="0px"
       >
         <el-form-item label="" prop="account" style="margin-top: 10px">
