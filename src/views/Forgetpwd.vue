@@ -55,7 +55,7 @@
           </el-row>
         </el-form-item>
         <el-form-item style="margin-top: 55px">
-          <el-button type="primary" round class="submitBtn" @click="submitForm">注册</el-button>
+          <el-button type="primary" round class="submitBtn" @click="submitForm">修改密码</el-button>
         </el-form-item>
       </el-form>
     </div>
