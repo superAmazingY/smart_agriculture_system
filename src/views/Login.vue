@@ -89,7 +89,6 @@ export default {
       //校验token
       console.log("用户输入的账号为：", userAccount);
       console.log("用户输入的密码为：", userPassword);
-
     },
   },
 };

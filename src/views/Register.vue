@@ -110,11 +110,24 @@ export default {
           message: "两次密码不一致",
         });
       }
-      //校验token
-      console.log("用户输入的账号为：", userAccount);
-      console.log("用户输入的密码为：", userPassword)
-      console.log("用户确认的密码为：", userconfirmPassword);
-
+      this.$axios.post("https://autumnfish.cn/api/user/reg",{
+        username:this.registerForm.account,
+      }).then(res=>{
+        if(res.data.msg === "注册成功"){
+          this.$router.push({
+            path:'/login'
+          });
+          return this.$message({
+            type:"success",
+            message:"注册成功请登录",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"注册失败，以存在该用户名",
+          })
+        }
+      })
     },
   },
 };
