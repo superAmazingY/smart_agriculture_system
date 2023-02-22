@@ -84,7 +84,7 @@ export default {
           potassiumValue:Math.random()*100,
         },
       ]
-    }
+    },
   },
   created() {
     setInterval(() => {

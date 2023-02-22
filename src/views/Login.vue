@@ -5,7 +5,7 @@
       <el-form
           :model="loginForm"
           :rules="loginRules"
-          ref="registerForm"
+          ref="forgetpwdForm"
           label-width="0px"
       >
         <el-form-item label="" prop="account" style="margin-top: 10px">
@@ -51,6 +51,7 @@
       </el-form>
     </div>
   </div>
+
 </template>
 
 
@@ -86,9 +87,25 @@ export default {
           message: "密码不能为空！",
         });
       }
-      //校验token
-      console.log("用户输入的账号为：", userAccount);
-      console.log("用户输入的密码为：", userPassword);
+      this.$axios.post("https://autumnfish.cn/api/user/reg",{
+        username:this.loginForm.account,
+        password:this.loginForm.passWord
+      }).then(res=>{
+        if(res.data.msg === "登录成功"){
+          this.$router.push({
+            path:'/home'
+          });
+          return this.$message({
+            type:"success",
+            message:"欢迎使用智能农业系统",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"用户名或密码错误"
+          })
+        }
+      })
     },
   },
 };

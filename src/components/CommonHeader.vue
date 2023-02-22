@@ -8,8 +8,7 @@
             <img class="user" src="../assets/rice.jpg" alt="">
           </span>
           <el-dropdown-menu>
-            <el-dropdown-item>设置</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item @click.native="exit">退出</el-dropdown-item>
           </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -23,6 +22,13 @@ export default {
     return{
 
     };
+  },
+  methods:{
+    exit(){
+      this.$router.push({
+        path:'/login'
+      })
+    }
   }
 }
 </script>

@@ -5,7 +5,7 @@
       <el-form
           :model="registerForm"
           :rules="registerRules"
-          ref="registerForm"
+          ref="forgetpwdForm"
           label-width="0px"
       >
         <el-form-item label="" prop="account" style="margin-top: 10px">
@@ -112,6 +112,7 @@ export default {
       }
       this.$axios.post("https://autumnfish.cn/api/user/reg",{
         username:this.registerForm.account,
+        password:this.registerForm.passWord
       }).then(res=>{
         if(res.data.msg === "注册成功"){
           this.$router.push({
@@ -121,10 +122,15 @@ export default {
             type:"success",
             message:"注册成功请登录",
           })
-        }else{
+        }else if(res.data.msg === "用户名存在"){
           return this.$message({
             type:"error",
             message:"注册失败，以存在该用户名",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"注册失败请再次尝试"
           })
         }
       })

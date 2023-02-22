@@ -7,7 +7,10 @@ import './plugins/charts.js'
 import store from './store'
 import 'echarts'
 import ECharts from 'vue-echarts'
+import { VueJsonp  } from 'vue-jsonp'
 
+Vue.prototype.$jsonp = VueJsonp
+Vue.use(VueJsonp)
 Vue.component('ECharts',ECharts)
 Vue.config.productionTip = false
 

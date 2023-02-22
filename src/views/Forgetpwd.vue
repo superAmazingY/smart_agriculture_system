@@ -3,9 +3,9 @@
     <div class="myregister" align="center">
       <h4>忘记密码</h4>
       <el-form
-          :model="registerForm"
+          :model="forgetpwdForm"
           :rules="registerRules"
-          ref="registerForm"
+          ref="forgetpwdForm"
           label-width="0px"
       >
         <el-form-item label="" prop="account" style="margin-top: 10px">
@@ -17,7 +17,7 @@
               <el-input
                   class="inps"
                   placeholder="账号"
-                  v-model="registerForm.account"
+                  v-model="forgetpwdForm.account"
               >
               </el-input>
             </el-col>
@@ -33,7 +33,7 @@
                   class="inps"
                   type="password"
                   placeholder="修改密码"
-                  v-model="registerForm.passWord"
+                  v-model="forgetpwdForm.passWord"
               ></el-input>
             </el-col>
           </el-row>
@@ -48,7 +48,7 @@
                   class="inps"
                   type="password"
                   placeholder="确认密码"
-                  v-model="registerForm.forgetPassword"
+                  v-model="forgetpwdForm.forgetPassword"
               >
               </el-input>
             </el-col>
@@ -68,7 +68,7 @@
 export default {
   data: function () {
     return {
-      registerForm: {
+      forgetpwdForm: {
         account: "",
         passWord: "",
         forgetPassword:'',
@@ -83,9 +83,9 @@ export default {
 
   methods: {
     submitForm() {
-      const userAccount = this.registerForm.account;
-      const userPassword = this.registerForm.passWord
-      const userforgetPassword = this.registerForm.forgetPassword;
+      const userAccount = this.forgetpwdForm.account;
+      const userPassword = this.forgetpwdForm.passWord
+      const userforgetPassword = this.forgetpwdForm.forgetPassword;
       if (!userAccount) {
         return this.$message({
           type: "error",
@@ -110,11 +110,30 @@ export default {
           message: "两次密码不一致",
         });
       }
-      //校验token
-      console.log("用户输入的账号为：", userAccount);
-      console.log("用户输入的密码为：", userPassword)
-      console.log("用户确认的密码为：", userforgetPassword);
-
+      this.$axios.post("https://autumnfish.cn/api/user/reg",{
+        username:this.forgetpwdForm.account,
+        password:this.forgetpwdForm.passWord
+      }).then(res=>{
+        if(res.data.msg === "修改成功"){
+          this.$router.push({
+            path:'/login'
+          });
+          return this.$message({
+            type:"success",
+            message:"修改密码成功请登录",
+          })
+        }else if(res.data.msg === "用户名不存在"){
+          return this.$message({
+            type:"error",
+            message:"修改密码失败，不存在该用户",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"修改密码失败，请再次尝试",
+          })
+        }
+      })
     },
   },
 };
