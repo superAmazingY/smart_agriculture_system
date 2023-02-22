@@ -15,7 +15,7 @@
             <p>当前登录地点：<span>{{ city }}</span></p>
           </div>
         </el-card>
-        <el-card class="box-card" style="height: 345px">
+        <el-card class="box-card" style="height: 355px">
           <template>
             <el-table
                 :data="tableData"
@@ -37,13 +37,13 @@
     </el-col>
     <el-col :span="16">
       <div class="grid-content bg-purple-light">
-        <el-card class="box-card" style="height: 210px">
+        <el-card class="box-card" style="height: 213px">
           <Temperature></Temperature>
         </el-card>
-        <el-card class="box-card" style="height: 210px">
+        <el-card class="box-card" style="height: 213px">
           <Azophoska></Azophoska>
         </el-card>
-        <el-card class="box-card" style="height: 210px">
+        <el-card class="box-card" style="height: 214px">
           <PHvalue></PHvalue>
         </el-card>
       </div>

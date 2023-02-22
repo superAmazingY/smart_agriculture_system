@@ -1,5 +1,10 @@
 <template>
   <div id>
+    <el-switch
+        v-model="value1"
+        inactive-text="氮磷钾传感器"
+        style="padding-left: 800px">
+    </el-switch>
     <e-charts class="charts" :option="option"/>
   </div>
 </template>
@@ -9,6 +14,7 @@ export default {
   data(){
     return{
       data:this.getRandomData(),
+      value1:true
     }
   },
   computed:{
