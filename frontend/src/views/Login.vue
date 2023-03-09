@@ -87,7 +87,7 @@ export default {
           message: "密码不能为空！",
         });
       }
-      this.$axios.post("http://172.20.10.6:9998/user/token?",{
+      this.$axios.post("http://172.20.10.6:8099/user/login?",{
         userId:this.loginForm.account,
         passwd:this.loginForm.passWord
       }).then(res=>{

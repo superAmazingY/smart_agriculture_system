@@ -110,7 +110,7 @@ export default {
           message: "两次密码不一致",
         });
       }
-      this.$axios.post("https://autumnfish.cn/api/user/reg",{
+      this.$axios.post("http://172.20.10.6:8099/user/forgetPassword?",{
         username:this.forgetpwdForm.account,
         password:this.forgetpwdForm.passWord
       }).then(res=>{

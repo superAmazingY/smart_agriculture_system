@@ -115,3 +115,4 @@ void  User::getErrorInfo(const HttpRequestPtr &req,
      auto resp = HttpResponse::newHttpJsonResponse(ret);
      callback(resp);
 }
+
