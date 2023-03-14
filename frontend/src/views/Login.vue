@@ -94,7 +94,7 @@ export default {
         console.log(res);
         if(res.data.msg === "登录成功"){
           this.$router.push({
-            path:'/home'
+            path:'/home/main'
           });
           return this.$message({
             type:"success",
