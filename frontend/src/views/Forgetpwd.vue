@@ -110,7 +110,7 @@ export default {
           message: "两次密码不一致",
         });
       }
-      this.$axios.post("http://172.20.10.6:8099/user/forgetPassword?",{
+      this.$axios.post("http://8.130.45.241:8099/user/forgetPassword?",{
         username:this.forgetpwdForm.account,
         password:this.forgetpwdForm.passWord
       }).then(res=>{

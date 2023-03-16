@@ -6,12 +6,23 @@ void User::loginInfo(const HttpRequestPtr &req,
                  std::string &&userId,
                  const std::string &password) {
     LOG_DEBUG << "User " << userId << " login";
+    HttpResponsePtr resp;
     //认证算法，读数据库，验证身份等...
-
-    Json::Value ret;
-    ret["result"] = "ok";
-    ret["token"] = drogon::utils::getUuid(); //生成token
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto f = clientPtr->execSqlAsyncFuture("SELECT * FROM public.user WHERE username = $1 AND password = $2", userId, password);
+    auto r = f.get();
+    if (r.size() > 0) {
+        Json::Value ret;
+        ret["result"] = "ok";
+        ret["data"] = "登录成功";
+        ret["token"] = drogon::utils::getUuid(); //生成token
+        resp = HttpResponse::newHttpJsonResponse(ret);
+    } else {
+        Json::Value ret;
+        ret["result"] = "ok";
+        ret["data"] = "登录失败";
+        resp = HttpResponse::newHttpJsonResponse(ret);
+    }
     callback(resp);
 }
 

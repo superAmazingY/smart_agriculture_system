@@ -110,7 +110,7 @@ export default {
           message: "两次密码不一致",
         });
       }
-      this.$axios.post("http://172.20.10.6:8099/user/register?",{
+      this.$axios.post("http://8.130.45.241:8099/user/register?",{
         username:this.registerForm.account,
         password:this.registerForm.passWord
       }).then(res=>{
