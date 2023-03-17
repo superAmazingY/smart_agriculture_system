@@ -110,11 +110,10 @@ export default {
           message: "两次密码不一致",
         });
       }
-      this.$axios.post("http://8.130.45.241:8099/user/register?",{
-        username:this.registerForm.account,
-        password:this.registerForm.passWord
+      this.$axios.post(`http://8.130.45.241:8099/user/register?userId=${userAccount}&passwd=${userPassword}`,{
       }).then(res=>{
-        if(res.data.msg === "注册成功"){
+        console.log(res);
+        if(res.data.data === "注册成功"){
           this.$router.push({
             path:'/login'
           });
@@ -122,7 +121,7 @@ export default {
             type:"success",
             message:"注册成功请登录",
           })
-        }else if(res.data.msg === "用户名存在"){
+        }else if(res.data.data === "用户名存在"){
           return this.$message({
             type:"error",
             message:"注册失败，以存在该用户名",

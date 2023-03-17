@@ -110,11 +110,9 @@ export default {
           message: "两次密码不一致",
         });
       }
-      this.$axios.post("http://8.130.45.241:8099/user/forgetPassword?",{
-        username:this.forgetpwdForm.account,
-        password:this.forgetpwdForm.passWord
+      this.$axios.post(`http://8.130.45.241:8099/user/forgetPassword?userId=${userAccount}&passwd=${userPassword}`,{
       }).then(res=>{
-        if(res.data.msg === "修改成功"){
+        if(res.data.data === "修改成功"){
           this.$router.push({
             path:'/login'
           });
@@ -122,7 +120,7 @@ export default {
             type:"success",
             message:"修改密码成功请登录",
           })
-        }else if(res.data.msg === "用户名不存在"){
+        }else if(res.data.data === "用户名不存在"){
           return this.$message({
             type:"error",
             message:"修改密码失败，不存在该用户",
