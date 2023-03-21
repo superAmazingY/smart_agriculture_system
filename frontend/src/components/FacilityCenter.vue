@@ -10,7 +10,7 @@
     </el-card>
     <el-card>
       <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-                height="500" style="width: 100%">
+                height="480" style="width: 100%">
         <el-table-column label="序号" prop="id"  width="100"></el-table-column>
         <el-table-column label="设备名称" prop="name" width="150"></el-table-column>
         <el-table-column label="设备概述" prop="address" width="600"></el-table-column>
@@ -18,10 +18,10 @@
         <el-table-column label="添加时间" prop="date" width="150"></el-table-column>
         <el-table-column align="right">
           <template slot="header">
-            <el-button type="text" @click="open">数据设置</el-button>
+            <el-button type="text" @click="open">添加设备</el-button>
           </template>
           <template>
-            <el-button size="mini" @click="handleEdit">编辑</el-button>
+            <el-button size="mini" @click="handleEdit" type="primary">编辑</el-button>
             <el-button size="mini" type="danger" @click="handleDelete">删除</el-button>
           </template>
         </el-table-column>
@@ -53,12 +53,6 @@ export default {
         date: '2023-03-19',
         name: 'RS485 温湿度PH传感器',
         address: '温湿度传感器多以温湿度一体式的探头作为测温元件，将温度和湿度信号采集出来，经过稳压滤波、运算放大、非线性校正、V/I转换、恒流及反向保护等电路处理后，转换成与温度和湿度成线性关系的电流信号或电压信号输出，也可以直接通过主控芯片进行485或232等接口输出。',
-        number: 1,
-      }, {
-        id: '4',
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
         number: 1,
       }],
       search: ''

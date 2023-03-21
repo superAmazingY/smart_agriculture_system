@@ -49,7 +49,6 @@
       </div>
     </el-col>
   </el-row>
-
 </template>
 
 <script>
@@ -101,13 +100,6 @@ export default {
       day = day < 10 ? '0' + day : day
       return `${year}-${month}-${day}`
     },
-    getJsonData() {
-      this.$axios.get("https://autumnfish.cn/api/joke/list?num=6")
-          .then((res) => {
-            this.jokes = res.data.data
-            console.log(this.jokes[0])
-          })
-    },
     // 获取ip所在城市、区等信息
     getIPCity() {
       const data = {
@@ -122,14 +114,7 @@ export default {
         return this.city;
       })
     },
-
-
   },
-  created() {
-    setInterval(() => {
-      this.getJsonData()
-    }, 1000)
-  }
 }
 </script>
 

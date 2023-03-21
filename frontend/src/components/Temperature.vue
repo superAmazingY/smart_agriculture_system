@@ -1,10 +1,5 @@
 <template>
   <div>
-    <el-switch
-        v-model="value"
-        inactive-text="温湿度传感器"
-        style="padding-left: 800px">
-    </el-switch>
     <e-charts class="charts" :option="option"/>
   </div>
 </template>
