@@ -4,13 +4,11 @@ import home from "../views/Home.vue"
 import login from "@/views/Login.vue";
 import forgetpwd from "../views/Forgetpwd.vue"
 import register from "@/views/Register.vue";
-import DataSet from "@/components/DataSet.vue";
+import DataSet from "@/components/DataCenter.vue";
 import CommonBody from "@/components/CommonBody.vue";
-import HomePage from "@/components/HomePage.vue";
-import PersonalCenter from "@/components/PersonalCenter.vue";
-import DataList from "@/components/DataList.vue";
-import FacilityList from "@/components/FacilityList.vue";
-import FacilitySet from "@/components/FacilitySet.vue";
+import Index from "@/components/Index.vue";
+import FacilityControl from "@/components/FacilityControl.vue";
+import FacilityCenter from "@/components/FacilityCenter.vue";
 
 Vue.use(VueRouter)
 
@@ -25,13 +23,11 @@ const routes = [
     component: home,
     children:[
       //子路由
-      {path: 'main',component: HomePage}, //首页
-      {path: 'personal',component: PersonalCenter},//个人中心
-      {path:'dataset',component:DataSet}, //数据设置
+      {path: 'main',component: Index}, //首页
+      {path: 'facilityControl',component: FacilityControl},//个人中心
       {path: 'monitoring',component: CommonBody}, //智能监控
-      {path: 'datalist',component: DataList}, //数据列表
-      {path: 'facilitylist',component: FacilityList},//设备列表
-      {path: 'facilityset' ,component: FacilitySet}, //设备设置
+      {path: 'facilityCenter',component: FacilityCenter},//设备列表
+      {path:'datacenter',component:DataSet}, //数据设置
     ],
   },
   {

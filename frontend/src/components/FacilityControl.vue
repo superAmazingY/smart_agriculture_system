@@ -1,5 +1,5 @@
 <template>
-<div>我是设备设置</div>
+<div>我是设备控制</div>
 </template>
 
 <script>
@@ -7,6 +7,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 
 </style>
