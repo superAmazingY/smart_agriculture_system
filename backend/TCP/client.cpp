@@ -1,49 +1,72 @@
-/********************************
-*
-*  Created on 2022/06/28
-*  Author: amazingY
-*
-*  An example of socket client.
-*
-*********************************/
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <fcntl.h>
+#include <termios.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <string.h>
-#include <unistd.h>
-#include <iostream>
 
-const char kServerSocketIp[] = "172.26.57.88";
-const int kServerSocketPort = 10086;  // 服务器端口
-const int kMsgSize = 1024;            // 接收char[]类型数据的buf大小
-int return_num;               // 声明int型数据接收recv()的返回值。
+#define PORT 10086
+#define DEVICE_FILE "/dev/ttyUSB0"
+#define BAUDRATE B9600
 
-int main() {
-  char send_msg[kMsgSize];
-  // 创建一个server使用的socket对象，并初始化为ipv4网络地址协议
-  // socket数据类型为stream，传输协议为tcp协议。
-  int client_socket = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
-  sockaddr_in server_addr;                                   // 创建服务端地址数据。
-  memset(&server_addr, 0, sizeof(server_addr));              // 先将保存地址的server_addr置为全0
-  server_addr.sin_family = AF_INET;                          // 指定地址协议为ipv4.
-  server_addr.sin_port = htons(kServerSocketPort);           // 指定服务端端口。
-  server_addr.sin_addr.s_addr = inet_addr(kServerSocketIp);  // 指定服务端ipv4地址。
-  // 连接服务器，成功返回0，错误返回-1
-  connect(client_socket,(sockaddr*)&server_addr,sizeof(server_addr));
-  char recv_msg_buf[kMsgSize];  // 创建接收数据的buf.
+int main()
+{
+    int serial_fd, socket_fd;
+    struct termios options;
+    struct sockaddr_in server_addr;
+    char buffer[1024] = {0};
 
-  while (true) {
-    std::cout<<"输入文本:";
-    std::cin.getline(send_msg,kMsgSize);
-    send(client_socket,send_msg,sizeof(send_msg),0);           // 发送数据。
-    std::cout << "发送信息: " << send_msg << std::endl;
-    return_num = recv(client_socket,recv_msg_buf,kMsgSize,0);  // 接收来自服务器的数据
-    std::cout << "服务器回复信息: " 
-              << recv_msg_buf << std::endl;
-    memset(recv_msg_buf,0,kMsgSize);
-    // 若在循环体内定义发送消息，可以选择将发送消息置0.
-    memset(send_msg,0,sizeof(send_msg));
-    sleep(1);
-  }
-  close(client_socket);
-  return 0;
+    // 打开串口设备
+    if ((serial_fd = open(DEVICE_FILE, O_RDWR | O_NOCTTY | O_SYNC)) < 0) {
+        std::cerr << "无法打开串口设备" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // 配置串口
+    tcgetattr(serial_fd, &options);
+    cfsetispeed(&options, BAUDRATE);
+    cfsetospeed(&options, BAUDRATE);
+    options.c_cflag |= (CLOCAL | CREAD);
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+    options.c_cflag &= ~PARENB;
+    options.c_cflag &= ~CSTOPB;
+    options.c_cc[VMIN] = 1;
+    options.c_cc[VTIME] = 10;
+    tcsetattr(serial_fd, TCSANOW, &options);
+
+    // 创建TCP套接字
+    if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        std::cerr << "无法创建套接字" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // 连接服务器
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    if (inet_pton(AF_INET, "8.130.45.241", &server_addr.sin_addr) <= 0) {
+        std::cerr << "无效的地址" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (connect(socket_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        std::cerr << "连接服务器失败" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // 读取串口数据并发送到服务器
+    while (true) {
+        int n = read(serial_fd, buffer, sizeof(buffer));
+        if (n > 0) {
+            std::cout << "读取到的数据: " << buffer << std::endl;
+            send(socket_fd, buffer, n, 0);
+            std::cout << "数据已发送" << std::endl;
+        }
+    }
+
+    close(serial_fd);
+    close(socket_fd);
+
+    return 0;
 }
