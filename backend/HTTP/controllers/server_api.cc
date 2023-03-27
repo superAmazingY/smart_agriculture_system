@@ -164,7 +164,7 @@ void  User::getErrorInfo(const HttpRequestPtr &req,
              std::function<void(const HttpResponsePtr &)> &&callback){
     Json::Value result;
     auto clientPtr = drogon::app().getDbClient("default");
-    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.\"errorValue\"");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.error_value");
     try {
         auto r = future.get();
         if (r.size() > 0) {

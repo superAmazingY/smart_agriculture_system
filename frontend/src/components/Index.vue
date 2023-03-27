@@ -1,4 +1,3 @@
-//写HTML
 <template>
   <div class="body">
     <el-header class="header" >
@@ -141,6 +140,7 @@ export default {
 <style scoped lang="less">
 .body{
   margin:auto;
+  text-align: center;
 }
 .header{
   border-radius: 2px;
@@ -170,8 +170,7 @@ export default {
 .wheather{
   float:left;
   border-radius: 2px;
-  margin:auto;
-  margin-left:5px;
+  margin: auto auto auto 5px;
   border:2px  grey;
   width:25%;
   height:550px;
@@ -185,6 +184,7 @@ export default {
   i{
     height:10px;
     padding-top:25px;
+    float:left;
   }
 }
 .document-right{
@@ -214,9 +214,8 @@ export default {
 .el-col-right-document{
     width:100px;
     height:80px;
-    margin:auto;
-    margin-left:10px;
-    padding:10px 5px;
+  margin: auto auto auto 10px;
+  padding:10px 5px;
     span{
       text-align: center;
       width:50px;
@@ -233,10 +232,7 @@ export default {
   .el-col {
     border-radius: 0px;
   }
-  /*.bg-purple-dark {
-    width:300px;
-    height:100px;
-  }*/
+
   .bg-purple {
     width:300px;
     height:150px;

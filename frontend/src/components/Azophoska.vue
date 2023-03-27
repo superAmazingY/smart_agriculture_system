@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <e-charts class="charts" :option="option"/>
   </div>
 </template>

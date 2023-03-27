@@ -1,22 +1,54 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Codespaces
+Marketplace
+Explore
+
+@superAmazingY
+superAmazingY
+/
+smart_agriculture_system
+Public
+Cannot fork because you own this repository and are not a member of any organizations.
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+smart_agriculture_system/frontend/src/components/FacilityControl.vue
+@superAmazingY
+superAmazingY smart_agriculture_system 1.0.6
+…
+Latest commit c458722 3 days ago
+History
+1 contributor
+207 lines (195 sloc)  4.98 KB
+
 <template>
   <div class="document">
     <el-row :gutter="20" >
       <!--第一列-->
       <el-col :span="8">
         <el-card class="box-card">
-            <div slot="header" >
-              <span>风扇设备控制</span>
-            </div>
-            <div class="text">
-              <p>当前环境温度</p>
-            </div>
-            <el-switch
-                v-model="value1"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                active-text="打开"
-                inactive-text="关闭">
-            </el-switch>
+          <div slot="header" >
+            <span>风扇设备控制</span>
+          </div>
+          <div class="text">
+            <p>当前环境温度</p>
+          </div>
+          <el-switch
+              v-model="value1"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              active-text="打开"
+              inactive-text="关闭">
+          </el-switch>
         </el-card>
 
         <el-card class="box-card">
@@ -54,7 +86,7 @@
 
       <el-col :span="8">
         <!--第二列-->
-        
+
         <el-card class="box-card">
           <div slot="header" >
             <span>水泵设备控制</span>
@@ -155,7 +187,7 @@
         </el-card>
       </el-col>
     </el-row>
-</div>
+  </div>
 </template>
 
 <script>
@@ -174,34 +206,33 @@ export default {
     }
   },
   methods(){
-
   },
 }
 </script>
 
 <style scoped lang="less">
-  .document{
-    margin:auto;
-    width:1525px;
-    text-align: center;
-  }
-  .box-card {
-    width: 480px;
-    margin-top: 20px;
-    .text {
-      font-size: 14px;
-      margin-bottom: 18px;
-      border: 1px solid black;
-      border-radius: 25px;
-      width:450px;
-      height:40px;
-      p{
-        text-align: center;
-        padding-top: 10px;
-      }
-    }
-    span{
-      font-size: 18px;
+.document{
+  margin:auto;
+  width:1525px;
+  text-align: center;
+}
+.box-card {
+  width: 480px;
+  margin-top: 20px;
+  .text {
+    font-size: 14px;
+    margin-bottom: 18px;
+    border: 1px solid black;
+    border-radius: 25px;
+    width:450px;
+    height:40px;
+    p{
+      text-align: center;
+      padding-top: 10px;
     }
   }
+  span{
+    font-size: 18px;
+  }
+}
 </style>
