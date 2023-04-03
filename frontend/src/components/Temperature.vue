@@ -8,7 +8,8 @@
 export default {
   data() {
     return {
-      data: this.getRandomData(),
+      HumidityData:[],
+      TemperatureData:[],
       value:true
     }
   },
@@ -26,7 +27,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: this.data.map(d => d.time),
+          data: this.TemperatureData.map(d => d.time),
         },
         yAxis: {
           type: 'value'
@@ -34,54 +35,41 @@ export default {
         series: [
           {
             name: '温度',
-            data: this.data.map(d => d.temperatureValue),
-            type: 'line'
+            data: this.TemperatureData.map(d => d.value),
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           },
           {
             name: '湿度',
-            data: this.data.map(d => d.humidityValue),
-            type: 'line'
+            data: this.HumidityData.map(d => d.value),
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           }
         ]
       }
     },
   },
   methods: {
-    getRandomData() {
-      return [
-        {
-          time: '2023-01-01',
-          temperatureValue: Math.random() * 100,
-          humidityValue: Math.random() * 100,
-        },
-        {
-          time: '2023-01-02',
-          temperatureValue: Math.random() * 100,
-          humidityValue: Math.random() * 100,
-        },
-        {
-          time: '2023-01-03',
-          temperatureValue: Math.random() * 100,
-          humidityValue: Math.random() * 100,
-        },
-        {
-          time: '2023-01-04',
-          temperatureValue: Math.random() * 100,
-          humidityValue: Math.random() * 100,
-        },
-        {
-          time: '2023-01-05',
-          temperatureValue: Math.random() * 100,
-          humidityValue: Math.random() * 100,
-        },
-      ]
-    }
+    getHumidityData() {
+      this.$axios.get("http://8.130.45.241:8099/user/humidityInfo").then(res=>{
+        this.HumidityData = res.data
+      })
+    },
+    getTemperatureData() {
+      this.$axios.get("http://8.130.45.241:8099/user/temperatureInfo").then(res=>{
+        this.TemperatureData = res.data
+      })
+    },
   },
-  created() {
-    setInterval(() => {
-      this.data = this.getRandomData();
-    }, 1000)
-  }
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getHumidityData();
+      this.getTemperatureData();
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
 }
 </script>
 

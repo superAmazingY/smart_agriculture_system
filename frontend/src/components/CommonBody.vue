@@ -1,56 +1,54 @@
 <template>
-  <div class="body">
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content bg-purple">
-          <el-card class="box-card">
-            <div class="user">
-              <img alt="" src="../assets/rice.jpg">
-              <div class="userinfo">
-                <p class="name">智能农业管理</p>
-                <p class="access">超级管理员</p>
-              </div>
+  <el-row>
+    <el-col :span="8">
+      <div class="grid-content bg-purple">
+        <el-card class="box-card">
+          <div class="user">
+            <img alt="" src="../assets/rice.jpg">
+            <div class="userinfo">
+              <p class="name">智能农业管理</p>
+              <p class="access">超级管理员</p>
             </div>
-            <div class="login-info">
-              <p>当前登录日期：<span>{{ time }}</span></p>
-              <p>当前登录地点：<span>{{ city }}</span></p>
-            </div>
-          </el-card>
-          <el-card class="box-card" style="height: 355px">
-            <template>
-              <el-table
-                  :data="tableData"
-                  style="width: 100%">
-                <el-table-column
-                    label="日期"
-                    prop="date"
-                    width="210">
-                </el-table-column>
-                <el-table-column
-                    label="错误提示"
-                    prop="cause"
-                    width="190">
-                </el-table-column>
-              </el-table>
-            </template>
-          </el-card>
-        </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content bg-purple-light">
-          <el-card class="box-card" style="height: 213px">
-            <Temperature></Temperature>
-          </el-card>
-          <el-card class="box-card" style="height: 213px">
-            <Azophoska></Azophoska>
-          </el-card>
-          <el-card class="box-card" style="height: 214px">
-            <PHvalue></PHvalue>
-          </el-card>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+          </div>
+          <div class="login-info">
+            <p>当前登录日期：<span>{{ time }}</span></p>
+            <p>当前登录地点：<span>{{ city }}</span></p>
+          </div>
+        </el-card>
+        <el-card class="box-card" style="height: 355px">
+          <template>
+            <el-table
+                :data="ErrorInfo"
+                style="width: 100%">
+              <el-table-column
+                  label="日期"
+                  prop="time"
+                  width="210">
+              </el-table-column>
+              <el-table-column
+                  label="错误提示"
+                  prop="value"
+                  width="190">
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-card>
+      </div>
+    </el-col>
+    <el-col :span="16">
+      <div class="grid-content bg-purple-light">
+        <el-card class="box-card" style="height: 213px">
+          <Temperature></Temperature>
+        </el-card>
+        <el-card class="box-card" style="height: 213px">
+          <Azophoska></Azophoska>
+        </el-card>
+        <el-card class="box-card" style="height: 214px">
+          <PHvalue></PHvalue>
+        </el-card>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -66,28 +64,8 @@ export default {
   },
   data() {
     return {
-      //后期修改为json数据
-      tableData: [{
-        date: '2023-01-02',
-        cause: 'PH值过高',
-      }, {
-        date: '2023-01-04',
-        cause: '温度过低',
-      }, {
-        date: '2023-01-05',
-        cause: '钾含量过高',
-      }, {
-        date: '2023-01-07',
-        cause: '氮含量过低',
-      }, {
-        date: '2023-01-07',
-        cause: '氮含量过低',
-      }, {
-        date: '2023-01-07',
-        cause: '氮含量过低',
-      }],
       time: this.getNowDate(),
-      jokes: [],
+      ErrorInfo: [],
       city: this.getIPCity(),
     };
   },
@@ -116,15 +94,24 @@ export default {
         return this.city;
       })
     },
+    getErrorInfo(){
+      this.$axios.get("http://8.130.45.241:8099/user/errorInfo").then(res=>{
+        this.ErrorInfo = res.data;
+      })
+    }
+  },
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getErrorInfo();
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   },
 }
 </script>
 
 <style lang="less" scoped>
-.body{
-  margin:auto;
-  text-align: center;
-}
 .user {
   padding-bottom: 20px;
   margin-bottom: 20px;

@@ -18,6 +18,8 @@ public:
         METHOD_ADD(User::getHumidityInfo, "humidityInfo",Get,Options);              // url:  http://8.130.45.241:8099/user/humidityInfo       (湿度API)
         METHOD_ADD(User::getPhValueInfo, "phValueInfo",Get,Options);              // url:  http://8.130.45.241:8099/user/phValueInfo         (PH值API)
         METHOD_ADD(User::getErrorInfo, "errorInfo",Get,Options);              // url:  http://8.130.45.241:8099/user/errorInfo        (错误提示API)
+        METHOD_ADD(User::getDataCenter, "datacenter",Get,Options);              // url:  http://8.130.45.241:8099/user/datacenter        (数据中心API)
+        METHOD_ADD(User::getFacilityCenter, "facility",Get,Options);              // url:  http://8.130.45.241:8099/user/facility        (设备中心API)
     METHOD_LIST_END
 
     // POST请求函数实现虚函数
@@ -50,5 +52,9 @@ public:
     void getPhValueInfo(const HttpRequestPtr &req,std::function<void(const HttpResponsePtr &)> &&callback);
 
     void getErrorInfo(const HttpRequestPtr &req,std::function<void(const HttpResponsePtr &)> &&callback);
+
+    void getDataCenter(const HttpRequestPtr &req,std::function<void(const HttpResponsePtr &)> &&callback);
+
+    void getFacilityCenter(const HttpRequestPtr &req,std::function<void(const HttpResponsePtr &)> &&callback);
 };
 

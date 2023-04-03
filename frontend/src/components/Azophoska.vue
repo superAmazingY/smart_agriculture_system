@@ -8,7 +8,9 @@
 export default {
   data(){
     return{
-      data:this.getRandomData(),
+      Ndata:[],
+      Pdata:[],
+      Kdata:[],
       value1:true
     }
   },
@@ -26,7 +28,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: this.data.map(d => d.time),
+          data: this.Ndata.map(d => d.time),
         },
         yAxis: {
           type: 'value'
@@ -34,64 +36,53 @@ export default {
         series: [
           {
             name:'氮含量',
-            data: this.data.map(d => d.nitrogenValue),
-            type: 'line'
+            data: this.Ndata.map(d => d.value),
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           },
           {
             name:'磷含量',
-            data: this.data.map(d => d.phosphorusValue),
-            type: 'line'
+            data: this.Pdata.map(d => d.value),
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           },
           {
             name:'钾含量',
-            data: this.data.map(d => d.potassiumValue),
-            type: 'line'
+            data: this.Kdata.map(d => d.value),
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           }
         ]
       }
     },
   },
   methods:{
-    getRandomData(){
-      return[
-        {
-          time:'2023-01-01',
-          nitrogenValue:Math.random()*100,
-          phosphorusValue:Math.random()*100,
-          potassiumValue:Math.random()*100,
-        },
-        {
-          time:'2023-01-02',
-          nitrogenValue:Math.random()*100,
-          phosphorusValue:Math.random()*100,
-          potassiumValue:Math.random()*100,
-        },
-        {
-          time:'2023-01-03',
-          nitrogenValue:Math.random()*100,
-          phosphorusValue:Math.random()*100,
-          potassiumValue:Math.random()*100,
-        },
-        {
-          time:'2023-01-04',
-          nitrogenValue:Math.random()*100,
-          phosphorusValue:Math.random()*100,
-          potassiumValue:Math.random()*100,
-        },
-        {
-          time:'2023-01-05',
-          nitrogenValue:Math.random()*100,
-          phosphorusValue:Math.random()*100,
-          potassiumValue:Math.random()*100,
-        },
-      ]
+    getNData() {
+      this.$axios.get("http://8.130.45.241:8099/user/nitrogenInfo").then(res=>{
+        this.Ndata = res.data
+      })
+    },
+    getPData() {
+      this.$axios.get("http://8.130.45.241:8099/user/phosphorusInfo").then(res=>{
+        this.Pdata = res.data
+      })
+    },
+    getKData() {
+      this.$axios.get("http://8.130.45.241:8099/user/potassiumInfo").then(res=>{
+        this.Kdata = res.data
+      })
     },
   },
-  created() {
-    setInterval(() => {
-      this.data = this.getRandomData();
-    },1000)
-  }
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getKData();
+      this.getPData();
+      this.getNData()
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
 }
 </script>
 

@@ -5,9 +5,6 @@
         <el-form-item label="作物名称">
           <el-input v-model="brand.equipmentName" aria-placeholder="设备名称" class="el-input_inner"></el-input>
         </el-form-item>
-        <el-form-item label="作物详情">
-          <el-input v-model="brand.equipmentView" aria-placeholder="设备概述" class="el-input_inner"></el-input>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit" class="el-button">搜索</el-button >
           <el-button icon="el-icon-delete" type="primary" @click="clearButton" class="el-button"></el-button>
@@ -17,25 +14,29 @@
     <el-card>
       <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
                 height="480" style="width: 100%">
-        <el-table-column label="序号" prop="id"  width="100"></el-table-column>
+        <el-table-column label="序号" prop="id"  width="100">
+          <template slot-scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
         <el-table-column label="名称" prop="name" width="100"></el-table-column>
-        <el-table-column label="PH范围" prop="PHvalue" width="100"></el-table-column>
-        <el-table-column label="温度范围" prop="temperatureValue" width="100"></el-table-column>
-        <el-table-column label="湿度范围" prop="humidityValue" width="100"></el-table-column>
-        <el-table-column label="氮含量范围" prop="Nvalue" width="100"></el-table-column>
-        <el-table-column label="磷含量范围" prop="Pvalue" width="100"></el-table-column>
-        <el-table-column label="钾含量范围" prop="Kvalue" width="100"></el-table-column>
-        <el-table-column label="添加日期" prop="date" width="150"></el-table-column>
+        <el-table-column label="PH范围" prop="ph_value" width="100"></el-table-column>
+        <el-table-column label="温度范围" prop="temperature_value" width="100"></el-table-column>
+        <el-table-column label="湿度范围" prop="humidity_value" width="100"></el-table-column>
+        <el-table-column label="氮含量范围" prop="n_value" width="100"></el-table-column>
+        <el-table-column label="磷含量范围" prop="p_value" width="100"></el-table-column>
+        <el-table-column label="钾含量范围" prop="k_value" width="100"></el-table-column>
+        <el-table-column label="添加日期" prop="time" width="150"></el-table-column>
         <el-table-column align="right">
           <template slot="header">
             <el-row>
-              <el-button type="primary" plain @click="dialogVisible=true">添加数据</el-button>
+              <el-button type="text"  @click="dialogVisible=true">添加数据</el-button>
             </el-row>
           </template>
-          <template>
-            <el-button size="mini" @click="handleEdit" type="primary">编辑</el-button>
-            <el-button size="mini" @click="handleApple" type="success">应用</el-button>
-            <el-button size="mini" type="danger" @click="handleDelete">删除</el-button>
+          <template slot-scope="scope">
+            <el-button type="primary" size="small" @click.native.prevent="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="success" size="small" @click.native.prevent="handleApple(scope.row)">应用</el-button>
+            <el-button type="danger" size="small" @click.native.prevent="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -45,7 +46,6 @@
         :visible.sync="dialogVisible"
         width="40%"
     >
-      <div class="el-dialog-div">
         <el-form :label-position="labelPosition" label-width="100px" :model="formLabelAlign">
           <el-form-item label="名称">
             <el-input v-model="formLabelAlign.name"></el-input>
@@ -73,7 +73,6 @@
             <el-button @click="dialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
-      </div >
     </el-dialog>
   </div>
 </template>
@@ -88,7 +87,6 @@ export default {
       //搜索
       brand:{
         equipmentName:'',
-        equipmentView:''
       },
        //弹窗的表单内容
        labelPosition: 'right',
@@ -101,67 +99,19 @@ export default {
         Pvalue: '',
         Kvalue: ''
       },
-      multipleSelection:[],
-      tableData: [{
-        id: '1',
-        date: '2023-03-19',
-        name: '苹果',
-        PHvalue: '7-10',
-        temperatureValue: '25-28',
-        humidityValue: '24-55',
-        Nvalue: '22-24',
-        Pvalue: '24-31',
-        Kvalue: '27-35'
-      }, {
-        id: '2',
-        date: '2023-03-19',
-        name: '香蕉',
-        PHvalue: '7-10',
-        temperatureValue: '25-28',
-        humidityValue: '24-55',
-        Nvalue: '22-24',
-        Pvalue: '24-31',
-        Kvalue: '27-35'
-      }, {
-        id: '3',
-        date: '2023-03-19',
-        name: '菠萝',
-        PHvalue: '7-10',
-        temperatureValue: '25-28',
-        humidityValue: '24-55',
-        Nvalue: '22-24',
-        Pvalue: '24-31',
-        Kvalue: '27-35'
-      }, {
-        id: '4',
-        date: '2016-05-03',
-        name: '草莓',
-        PHvalue: '7-10',
-        temperatureValue: '25-28',
-        humidityValue: '24-55',
-        Nvalue: '22-24',
-        Pvalue: '24-31',
-        Kvalue: '27-35'
-      },{
-        id: '5',
-        date: '2016-05-03',
-        name: '小麦',
-        PHvalue: '7-10',
-        temperatureValue: '25-28',
-        humidityValue: '24-55',
-        Nvalue: '22-24',
-        Pvalue: '24-31',
-        Kvalue: '27-35'
-      }],
+      tableData: [],
       search: ''
     }
   },
   methods: {
-    handleEdit(){
-
+    handleEdit(row){
+      console.log(row);
     },
-    handleDelete(){
-
+    handleDelete(row){
+      console.log(row)
+    },
+    handleApple(row){
+      console.log(row)
     },
     //搜索按钮
     onSubmit(){
@@ -174,8 +124,21 @@ export default {
     clearButton(){
       this.input1 = '';
       this.input2 = '';
+    },
+    getTableData(){
+      this.$axios.get("http://8.130.45.241:8099/user/datacenter").then(res=>{
+        this.tableData = res.data;
+      })
     }
-  }
+  },
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getTableData();
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
 }
 </script >
 
@@ -203,9 +166,5 @@ export default {
   float: left;
 }
 
-.el-dialog-div{
-  height: 60vh;
-  overflow: auto;
-}
 
 </style>

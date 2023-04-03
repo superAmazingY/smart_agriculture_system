@@ -1,7 +1,11 @@
 <template>
   <div class="body">
     <el-header class="header" >
-      <img src="../assets/logo.png" width="50px" height="50px">
+      <div class="r-content">
+        <span class="el-dropdown-link">
+            <img class="user" src="../assets/rice.jpg" alt="">
+          </span>
+      </div>
       <h3>欢迎来到智慧农业检测系统</h3>
     </el-header>
     <div class="clear"></div>
@@ -104,6 +108,9 @@
 
 <script>
 export default {
+  data(){
+
+  },
   created(){
     window.WIDGET = {
       "CONFIG": {
@@ -132,7 +139,6 @@ export default {
         }, 100);
       }
     })(document)
-
   }
 };
 </script>
@@ -153,13 +159,18 @@ export default {
   margin-left:5px;
   margin-bottom: 20px;
   float:left;
-  img{
+  .r-content{
     float:left;
-    padding:10px 20px;
+    padding:7px 20px;
+    .user{
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
   }
   h3{
     float:left;
-    padding:0px 20px;
+    padding:15px 20px;
     text-align: center;
     display: inline;
   }

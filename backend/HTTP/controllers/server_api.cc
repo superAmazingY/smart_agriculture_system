@@ -96,68 +96,148 @@ void User::registerInfo(const HttpRequestPtr &req,
 //氮含量
 void  User::getNitrogenInfo(const HttpRequestPtr &req,
              std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.n_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
 
 //磷含量
 void  User::getPhosphorusInfo(const HttpRequestPtr &req,
                             std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.p_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
 
 //钾含量
 void  User::getPotassiumInfo(const HttpRequestPtr &req,
                               std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.k_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
 
 //温度
 void  User::getTemperatureInfo(const HttpRequestPtr &req,
                              std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.temperature_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
 
 //湿度
 void  User::getHumidityInfo(const HttpRequestPtr &req,
                                std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.humidity_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
 
 //PH值
-void  User::getPhValueInfo(const HttpRequestPtr &req,
-                            std::function<void(const HttpResponsePtr &)> &&callback) {
-    //验证token有效性等
-    //读数据库或缓存获取用户信息
-    Json::Value ret;
-    ret["result"] = "ok";
-    auto resp = HttpResponse::newHttpJsonResponse(ret);
-    callback(resp);
+void User::getPhValueInfo(const HttpRequestPtr &req,
+                          std::function<void(const HttpResponsePtr &)> &&callback) {
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.ph_value order by id desc limit 5");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["time"] = row["time"].as<std::string>();
+                obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            std::reverse(result.begin(), result.end()); // 反转结果数组顺序
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
 }
+
+
 
 //错误信息
 void  User::getErrorInfo(const HttpRequestPtr &req,
@@ -172,6 +252,60 @@ void  User::getErrorInfo(const HttpRequestPtr &req,
                 Json::Value obj;
                 obj["time"] = row["time"].as<std::string>();
                 obj["value"] = row["value"].as<std::string>();
+                result.append(obj);
+            }
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
+
+//数据中心
+void  User::getDataCenter(const HttpRequestPtr &req,
+                         std::function<void(const HttpResponsePtr &)> &&callback){
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.datacenter_value");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["name"] = row["name"].as<std::string>();
+                obj["ph_value"] = row["ph_value"].as<std::string>();
+                obj["temperature_value"] = row["temperature_value"].as<std::string>();
+                obj["humidity_value"] = row["humidity_value"].as<std::string>();
+                obj["n_value"] = row["n_value"].as<std::string>();
+                obj["p_value"] = row["p_value"].as<std::string>();
+                obj["k_value"] = row["k_value"].as<std::string>();
+                obj["time"] = row["time"].as<std::string>();
+                result.append(obj);
+            }
+            auto resp = HttpResponse::newHttpJsonResponse(result);
+            callback(resp);
+        }
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
+
+//设备中心
+void  User::getFacilityCenter(const HttpRequestPtr &req,
+                         std::function<void(const HttpResponsePtr &)> &&callback){
+    Json::Value result;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto future = clientPtr->execSqlAsyncFuture("SELECT * FROM public.facilitycenter_value");
+    try {
+        auto r = future.get();
+        if (r.size() > 0) {
+            for (const auto& row : r) {
+                Json::Value obj;
+                obj["name"] = row["name"].as<std::string>();
+                obj["info"] = row["info"].as<std::string>();
+                obj["number"] = row["number"].as<std::string>();
+                obj["time"] = row["time"].as<std::string>();
                 result.append(obj);
             }
             auto resp = HttpResponse::newHttpJsonResponse(result);

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <e-charts class="charts" :option="option"/>
+    <e-charts :option="option" class="charts"/>
   </div>
 </template>
 
@@ -8,8 +8,8 @@
 export default {
   data() {
     return {
-      data: this.getRandomData(),
-      value:true
+      data: [],
+      value: true
     }
   },
   computed: {
@@ -35,43 +35,28 @@ export default {
           {
             name: 'PH值',
             data: this.data.map(d => d.value),
-            type: 'line'
+            type: 'line',
+            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
           }
         ]
       }
     },
   },
   methods: {
-    getRandomData() {
-      return [
-        {
-          time: '2023-01-01',
-          value: Math.random() * 100,
-        },
-        {
-          time: '2023-01-02',
-          value: Math.random() * 100,
-        },
-        {
-          time: '2023-01-03',
-          value: Math.random() * 100,
-        },
-        {
-          time: '2023-01-04',
-          value: Math.random() * 100,
-        },
-        {
-          time: '2023-01-05',
-          value: Math.random() * 100,
-        },
-      ]
+    getPhData() {
+      this.$axios.get("http://8.130.45.241:8099/user/phValueInfo").then(res => {
+        this.data = res.data
+      })
     }
   },
-  created() {
-    setInterval(() => {
-      this.data = this.getRandomData();
-    }, 1000)
-  }
+  mounted() {
+    this.intervalId = setInterval(() => {
+      this.getPhData();
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
+  },
 }
 </script>
 

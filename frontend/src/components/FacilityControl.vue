@@ -1,35 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Codespaces
-Marketplace
-Explore
-
-@superAmazingY
-superAmazingY
-/
-smart_agriculture_system
-Public
-Cannot fork because you own this repository and are not a member of any organizations.
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-smart_agriculture_system/frontend/src/components/FacilityControl.vue
-@superAmazingY
-superAmazingY smart_agriculture_system 1.0.6
-…
-Latest commit c458722 3 days ago
-History
-1 contributor
-207 lines (195 sloc)  4.98 KB
-
 <template>
   <div class="document">
     <el-row :gutter="20" >
@@ -205,15 +173,12 @@ export default {
       value9:true,
     }
   },
-  methods(){
-  },
 }
 </script>
 
 <style scoped lang="less">
 .document{
   margin:auto;
-  width:1525px;
   text-align: center;
 }
 .box-card {
