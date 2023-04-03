@@ -5,7 +5,16 @@
         <span class="el-dropdown-link">
             <img class="user" src="../assets/rice.jpg" alt="">
           </span>
+        <!-- <el-col :span="12">
+          <div class="demo-basic--circle">
+            <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar></div>
+            <div class="block" v-for="size in sizeList" :key="size">
+              <el-avatar :size="size" :src="circleUrl"></el-avatar>
+            </div>
+          </div>
+        </el-col> -->
       </div>
+      <!-- <img src="../assets/logo.png" width="50px" height="50px"> -->
       <h3>欢迎来到智慧农业检测系统</h3>
     </el-header>
     <div class="clear"></div>
@@ -16,92 +25,36 @@
       <div id="he-plugin-standard"></div>
     </el-card>
     <!--分布-->
-    <div>
-      <div class="document-right">
-        <el-row>
-          <el-col :span="12">
-            <el-card class="grid-content bg-purple">
-              <div class="el-col-right">
-                <el-breadcrumb separator="/ " classs="el-breadcrumb">
-                  <el-breadcrumb-item >总设备</el-breadcrumb-item>
-                  <el-breadcrumb-item > </el-breadcrumb-item>
-                </el-breadcrumb>
-              </div><br/><br/>
-              <div class="el-col-right-document">
-                <el-col :span="6">
-                  <div>
-                    <el-statistic title="" >
-                      <template slot="formatter"> <span>10</span></template>
-                    </el-statistic>
-                  </div>
-                </el-col>
-              </div>
-            </el-card>
-          </el-col>
 
-          <el-col :span="12">
-            <el-card class="grid-content bg-purple">
-              <div class="el-col-right">
-                <el-breadcrumb separator="/ " classs="el-breadcrumb">
-                  <el-breadcrumb-item >在线设备</el-breadcrumb-item>
-                  <el-breadcrumb-item > </el-breadcrumb-item>
-                </el-breadcrumb>
-              </div><br/><br/>
-              <div class="el-col-right-document">
-                <el-col :span="6">
-                  <div>
-                    <el-statistic title="" >
-                      <template slot="formatter"> <span>3</span></template>
-                    </el-statistic>
-                  </div>
-                </el-col>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row><hr>
-
-        <el-row>
-          <el-col :span="12">
-            <el-card class="grid-content bg-purple-light">
-              <div class="el-col-right">
-                <el-breadcrumb separator="/ " classs="el-breadcrumb">
-                  <el-breadcrumb-item >总传感器</el-breadcrumb-item>
-                  <el-breadcrumb-item > </el-breadcrumb-item>
-                </el-breadcrumb>
-              </div><br/><br/>
-              <div class="el-col-right-document">
-                <el-col :span="6">
-                  <div>
-                    <el-statistic title="" >
-                      <template slot="formatter" ><span text="center">45</span> </template>
-                    </el-statistic>
-                  </div>
-                </el-col>
-              </div>
-            </el-card>
-          </el-col>
-
-          <el-col :span="12">
-            <el-card class="grid-content bg-purple-light">
-              <div class="el-col-right">
-                <el-breadcrumb separator="/ " classs="el-breadcrumb">
-                  <el-breadcrumb-item >在线传感器</el-breadcrumb-item>
-                  <el-breadcrumb-item > </el-breadcrumb-item>
-                </el-breadcrumb>
-              </div><br/><br/>
-              <div class="el-col-right-document">
-                <el-col :span="6">
-                  <div>
-                    <el-statistic title="" >
-                      <template slot="formatter" ><span text="center">42 </span> </template>
-                    </el-statistic>
-                  </div>
-                </el-col>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row><hr>
-      </div>
+    <div class="pic">
+      <img src="../assets/cotton.jpg"/>
+      <img src="../assets/sesame.jpg"/>
+      <img src="../assets/potato.jpg"/>
+      <img src="../assets/barley.jpg"/>
+    </div>
+    <div class="block">
+      <el-timeline>
+        <el-timeline-item timestamp="春季(3——5月)" placement="top">
+          <el-card class="card">
+            <h4>花生，棉花，大豆，水稻等，冬前育苗、早春移栽的作物包括番茄、彩色辣椒</h4>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item timestamp="夏季(6——8月)" placement="top">
+          <el-card class="card">
+            <h4>早稻，早中稻，芝麻，花生等</h4>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item timestamp="秋季(9——11月)" placement="top">
+          <el-card class="card">
+            <h4>小麦，油菜，土豆，甜菜等</h4>
+          </el-card>
+        </el-timeline-item>
+        <el-timeline-item timestamp="冬季(12——2月)" placement="top">
+          <el-card class="card">
+            <h4>大麦，蚕豆，豌豆，油菜等</h4>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
     </div>
   </div>
 </template>
@@ -109,7 +62,9 @@
 <script>
 export default {
   data(){
+    return{
 
+    }
   },
   created(){
     window.WIDGET = {
@@ -119,7 +74,7 @@ export default {
         "height": 450,
         "background": "2",
         "dataColor": "000000",
-        "key": "49c92f65b0a84c3c98356dd3d1705736"
+        "key": "83134152765846c9b98243bdf23fa6f1"
       }
 
     };
@@ -139,6 +94,7 @@ export default {
         }, 100);
       }
     })(document)
+
   }
 };
 </script>
@@ -173,6 +129,24 @@ export default {
     padding:15px 20px;
     text-align: center;
     display: inline;
+  }
+}
+.pic{
+  width:15%;
+  float: left;
+  height:535px;
+  margin-left: 25px;
+  img{
+    width:100%;
+    height:25%;
+  }
+}
+.block{
+  width:55%;
+  padding-right: 0px;
+  float: right;
+  .card{
+    height: 94px;
   }
 }
 .clear{
