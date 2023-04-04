@@ -103,6 +103,7 @@ export default {
 .body{
   margin:auto;
   text-align: center;
+  width: 1480px;
 }
 .header{
   border-radius: 2px;

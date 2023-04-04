@@ -180,6 +180,7 @@ export default {
 .document{
   margin:auto;
   text-align: center;
+  width: 1480px;
 }
 .box-card {
   width: 480px;

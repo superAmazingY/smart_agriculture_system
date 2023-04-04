@@ -125,6 +125,7 @@ export default {
 .body{
   margin:auto;
   text-align: center;
+  width: 1480px;
 }
 .header {
   margin: auto;

@@ -85,6 +85,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin:auto;
+  text-align: center;
+  width: 1480px;
   .r-content{
     .user{
       width: 40px;
