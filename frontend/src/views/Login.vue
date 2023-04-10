@@ -89,7 +89,7 @@ export default {
       }
       this.$axios.post(`http://8.130.45.241:8099/user/login?userId=${userAccount}&passwd=${userPassword}`,{
       }).then(res=>{
-        console.log(userAccount);
+        console.log(res);
         if(res.data.data === "登录成功"){
           this.$router.push({
             path:'/home/main'
