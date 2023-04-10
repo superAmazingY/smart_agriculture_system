@@ -45,7 +45,7 @@
           <router-link :to="{ path: '/forgetpwd' }"> 忘记密码</router-link>
           |
           <router-link :to="{ path: '/register' }">
-            <a href=" " target="_blank" align="right">注册新账号</a>
+            <a href=" " target="_blank" align="right" >注册新账号</a>
           </router-link>
         </div>
       </el-form>
@@ -113,13 +113,15 @@ export default {
 
 <style scoped lang="less">
 .login {
-  width: 100vw;
+  background: url(../assets/bg_image.jpg) no-repeat;
+  background-size:cover;
+  width: 100%;
   padding: 0;
   margin: 0;
   height: 100vh;
   font-size: 16px;
   background-position: left top;
-  background-color: #242645;
+  //background-color: #242645;
   color: #fff;
   font-family: "Source Sans Pro";
   position: relative;
@@ -154,6 +156,9 @@ export default {
   background-color: transparent;
   color: #39f;
   width: 200px;
+}
+a{
+  color:#39f;
 }
 
 </style>

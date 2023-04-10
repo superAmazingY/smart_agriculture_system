@@ -78,6 +78,8 @@ export default {
 
 <style lang="less" scoped>
 .header-container{
+  margin: auto;
+  width:1490px;
   padding-left: 0;
   padding-right: 0;
   background: #333;
@@ -85,9 +87,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin:auto;
-  text-align: center;
-  width: 1480px;
   .r-content{
     .user{
       width: 40px;

@@ -18,6 +18,9 @@ export default {
       return {
         title: {
           text: '温湿度',   //图表顶部的标题
+          textStyle:{
+              color:'#fff'
+          },
         },
         tooltip: {   //鼠标悬浮框的提示文字
           trigger: 'axis'
@@ -28,22 +31,38 @@ export default {
         xAxis: {
           type: 'category',
           data: this.TemperatureData.map(d => d.time),
+          axisLine:{    //改变坐标数据颜色
+            lineStyle:{
+              color:"#fff"
+            }
+          }
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          axisLine:{
+            lineStyle:{
+              color:"#fff"
+            }
+          }
         },
         series: [
           {
             name: '温度',
             data: this.TemperatureData.map(d => d.value),
             type: 'line',
-            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            smooth: true ,// 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            itemStyle:{
+                color:'#00f0ff',
+            }
           },
           {
             name: '湿度',
             data: this.HumidityData.map(d => d.value),
             type: 'line',
-            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            smooth: true ,// 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            itemStyle:{
+                color:'#ff7800',
+            }
           }
         ]
       }

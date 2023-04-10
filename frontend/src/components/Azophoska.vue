@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <e-charts class="charts" :option="option"/>
   </div>
 </template>
@@ -19,6 +19,9 @@ export default {
       return{
         title: {
           text: '氮磷钾含量',   //图表顶部的标题
+          textStyle:{
+              color:'#fff'
+          },
         },
         tooltip: {   //鼠标悬浮框的提示文字
           trigger: 'axis'
@@ -29,28 +32,47 @@ export default {
         xAxis: {
           type: 'category',
           data: this.Ndata.map(d => d.time),
+          axisLine:{    //改变坐标数据颜色
+            lineStyle:{
+              color:"#fff"
+            }
+          }
         },
         yAxis: {
-          type: 'value'
+          type: 'value',
+          axisLine:{
+            lineStyle:{
+              color:"#fff"
+            }
+          }
         },
         series: [
           {
             name:'氮含量',
             data: this.Ndata.map(d => d.value),
             type: 'line',
-            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            smooth: true ,// 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            itemStyle:{   //改变折线颜色
+                color:'#0ff0f0',
+            }
           },
           {
             name:'磷含量',
             data: this.Pdata.map(d => d.value),
             type: 'line',
-            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            smooth: true ,// 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            itemStyle:{
+                color:'#00ff73',
+            }
           },
           {
             name:'钾含量',
             data: this.Kdata.map(d => d.value),
             type: 'line',
-            smooth: true // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            smooth: true, // 将 smooth 属性设置为 true，即可将折线图替换为曲线图。
+            itemStyle:{
+                color:'#ff7800',
+            }
           }
         ]
       }

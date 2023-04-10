@@ -1,8 +1,8 @@
 <template>
-  <div class="body">
-    <el-row>
-      <el-col :span="8">
-        <div class="grid-content bg-purple">
+  <el-row class="body">
+    <el-col :span="8">
+      <div class="grid-content bg-purple">
+        <div class="container">
           <el-card class="box-card">
             <div class="user">
               <img alt="" src="../assets/rice.jpg">
@@ -16,15 +16,19 @@
               <p>当前登录地点：<span>{{ city }}</span></p>
             </div>
           </el-card>
+        </div>
+        <div class="container">
           <el-card class="box-card" style="height: 355px">
-            <template>
               <el-table
                   :data="ErrorInfo"
-                  style="width: 100%">
+                  style="width: 100%" :row-style="getRowClass" 
+                  :header-row-style="getRowClass" 
+                  :header-cell-style="getRowClass">
                 <el-table-column
                     label="日期"
                     prop="time"
-                    width="210">
+                    width="210"
+                    >
                 </el-table-column>
                 <el-table-column
                     label="错误提示"
@@ -32,25 +36,31 @@
                     width="190">
                 </el-table-column>
               </el-table>
-            </template>
+            
           </el-card>
         </div>
-      </el-col>
-      <el-col :span="16">
-        <div class="grid-content bg-purple-light">
+      </div>
+    </el-col>
+    <el-col :span="16">
+      <div class="grid-content bg-purple-light">
+        <div class="container">
           <el-card class="box-card" style="height: 213px">
             <Temperature></Temperature>
           </el-card>
+        </div>
+        <div class="container">
           <el-card class="box-card" style="height: 213px">
             <Azophoska></Azophoska>
           </el-card>
+        </div>
+        <div class="container">
           <el-card class="box-card" style="height: 214px">
             <PHvalue></PHvalue>
           </el-card>
         </div>
-      </el-col>
-    </el-row>
-  </div>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -82,6 +92,9 @@ export default {
       day = day < 10 ? '0' + day : day
       return `${year}-${month}-${day}`
     },
+    getRowClass({ row, column, rowIndex, columnIndex }) {
+                return "background:rgba(11, 124, 216, 0.5);color:#fff;";
+            },
     // 获取ip所在城市、区等信息
     getIPCity() {
       const data = {
@@ -116,8 +129,10 @@ export default {
 <style lang="less" scoped>
 .body{
   margin:auto;
-  text-align: center;
-  width: 1480px;
+  //text-align: center;
+  width: 1490px;
+  background: url(../assets/bg_image.jpg)  no-repeat;
+  background-size:cover;
 }
 .user {
   padding-bottom: 20px;
@@ -138,9 +153,11 @@ export default {
       font-size: 32px;
       margin-bottom: 10px;
     }
-
+    p{
+      color:aliceblue;
+    }
     .access {
-      color: #999999;
+      color:cornsilk;
     }
   }
 }
@@ -149,12 +166,41 @@ export default {
   p {
     line-height: 28px;
     font-size: 14px;
-    color: #999999;
+    color: #fff;
 
     span {
-      color: #666666;
+      color: #fff;
       margin-left: 60px;
     }
   }
+}
+.container{
+  background-color: rgba(11, 124, 216, 0.5);
+  opacity:0.85;
+  .el-card{
+    background-color: rgba(11, 124, 216, 0.5);
+    border:0;
+  }
+}
+/deep/.el-table,/deep/.el-table__expanded-cell{
+  background-color:  transparent !important;
+  color:black;
+ 
+  /deep/.el-table th{
+    background-color: transparent !important;
+  }
+  /deep/.el-table tr{
+    background-color: transparent !important;
+  }
+  /deep/.el-table td{
+  background-color: transparent !important;
+  }
+}
+.el-table::before{
+  left:0;
+  bottom: 0;
+  width:100%;
+  height:0px;
+
 }
 </style>

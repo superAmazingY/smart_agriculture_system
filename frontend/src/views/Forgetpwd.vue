@@ -140,13 +140,13 @@ export default {
 
 <style scoped lang="less">
 .register {
+  background-size:cover;
   width: 100vw;
   padding: 0;
   margin: 0;
   height: 100vh;
   font-size: 16px;
-  background-position: left top;
-  background-color: #242645;
+  background: #242645 url(../assets/bg_image.jpg) no-repeat left top;
   color: #fff;
   position: relative;
   .myregister {
