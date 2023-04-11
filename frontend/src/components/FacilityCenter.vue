@@ -16,9 +16,7 @@
     <div class="container">
       <el-card>
         <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-                  height="470" style="width: 100%" :row-style="getRowClass" 
-                  :header-row-style="getRowClass" 
-                  :header-cell-style="getRowClass">
+                  height="470" style="width: 100%" >
           <el-table-column label="序号" prop="id"  width="100">
             <template slot-scope="scope">
               {{scope.$index+1}}
@@ -53,7 +51,7 @@
           <el-input v-model="formLabelAlign.name"></el-input>
         </el-form-item>
         <el-form-item label="设备概述">
-          <el-input v-model="formLabelAlign.address"></el-input>
+          <el-input v-model="formLabelAlign.info"></el-input>
         </el-form-item>
         <el-form-item label="数量">
           <el-input v-model="formLabelAlign.number"></el-input>
@@ -80,7 +78,7 @@ export default {
       labelPosition: 'right',
       formLabelAlign: {
         name: '',
-        address: '',
+        info: '',
         number: '',
       },
       //搜索
@@ -92,6 +90,58 @@ export default {
     }
   },
   methods: {
+    //添加设备
+    addBrand(){
+      const name=this.formLabelAlign.name;
+      const info=this.formLabelAlign.info;
+      const number=this.formLabelAlign.number;
+      const date=this.getNowDate();
+      if(!name){
+        return this.$message({
+          type:"error",
+          message:"设备名称不能为空！",
+        });
+      }
+      if(!number){
+        return this.$message({
+          type:"error",
+          message:"设备数量不能为空！",
+        });
+      }
+      if(!info){
+        return this.$message({
+          type:"error",
+          message:"设备数量不能为空！",
+        });
+      }
+        this.$axios.post(`http://8.130.45.241:8099/user/getFacilityData?name=${name}&info=${info}&number=${number}&date=${date}`, {
+        }).then(res=>{
+              if(res.data.data === "添加成功"){
+                return this.$message({
+                  type:"success",
+                  message:"添加成功",
+                })
+              }
+              else{
+                return this.$message({
+                  type:"error",
+                  message:"添加失败",
+                })
+              }
+            }
+        )
+      this.dialogVisible = false;
+    },
+    //获取当前系统时间
+    getNowDate(){
+      const timeOne = new Date()
+      const year = timeOne.getFullYear()
+      let month = timeOne.getMonth() + 1
+      let day = timeOne.getDate()
+      month = month < 10 ? '0' + month : month
+      day = day < 10 ? '0' + day : day
+      return `${year}-${month}-${day}`
+    },
     handleEdit(row){
       console.log(row);
     },
@@ -102,10 +152,7 @@ export default {
     onSubmit(){
       console.log(this.brand);
     },
-    //提交按钮
-    addBrand(){
-      console.log(this.formLabelAlign);
-    },
+
     clearButton(){
       this.input1 = '';
       this.input2 = '';
@@ -129,10 +176,10 @@ export default {
 
 <style lang="less" scoped>
 .body{
-  
+
   margin:auto;
   text-align: center;
-  width: 1490px;
+  width: 1495px;
   background: url("../assets/bg_image.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -144,8 +191,8 @@ export default {
   color:azure;
   .el-input_inner {
     width: 300px;
-   padding: 5px 15px;
-   float: left;
+    padding: 5px 15px;
+    float: left;
   }
 }
 
@@ -155,16 +202,16 @@ export default {
   .el-card{
     background-color: rgba(17, 91, 151, 0.5);
     border:0;
-    
+
   }
 }
 /deep/.el-table,/deep/.el-table__expanded-cell{
   background-color:  transparent !important;
- 
+
   /deep/.el-table th,
   /deep/.el-table tr,
   /deep/.el-table td{
-  background-color: transparent !important;
+    background-color: transparent !important;
   }
 }
 .el-table::before{

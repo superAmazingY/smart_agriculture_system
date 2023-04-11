@@ -20,6 +20,10 @@ public:
         METHOD_ADD(User::getErrorInfo, "errorInfo",Get,Options);              // url:  http://8.130.45.241:8099/user/errorInfo        (错误提示API)
         METHOD_ADD(User::getDataCenter, "datacenter",Get,Options);              // url:  http://8.130.45.241:8099/user/datacenter        (数据中心API)
         METHOD_ADD(User::getFacilityCenter, "facility",Get,Options);              // url:  http://8.130.45.241:8099/user/facility        (设备中心API)
+        METHOD_ADD(User::getCenterData, "getCenterData?name={1}&ph={2}&temperature={3}&humidity={4}&N={5}&P={6}&K={7}&date={8}",Post,Options);
+        // url:  http://8.130.45.241:8099/user/getCenterData?name={1}&ph={2}&temperature={3}&humidity={4}&N={5}&P={6}&K={7}&date={8} (数据中心API)
+        METHOD_ADD(User::getFacilityData, "getFacilityData?name={1}&info={2}&number={3}&date={4}",Post,Options);
+        //url: http://8.130.45.241:8099/user/getFacilityData?name={1}&info={2}&num={3}&date={4}  (设备中心API)
     METHOD_LIST_END
 
     // POST请求函数实现虚函数
@@ -37,6 +41,15 @@ public:
                    std::function<void(const HttpResponsePtr &)> &&callback,
                    std::string &&userId,
                    const std::string &password);
+
+    void getCenterData(const HttpRequestPtr &req,
+                  std::function<void(const HttpResponsePtr &)> &&callback,
+                  const std::string &name,const std::string &ph,const std::string &temperature,
+                  const std::string &humidity,const std::string &N,const std::string &P,const std::string &K,const std::string &date);
+
+    void getFacilityData(const HttpRequestPtr &req,
+                       std::function<void(const HttpResponsePtr &)> &&callback,
+                       const std::string &name,const std::string &info,const std::string &num,const std::string &date);
 
     //GET请求函数实现虚函数
     void getNitrogenInfo(const HttpRequestPtr &req,std::function<void(const HttpResponsePtr &)> &&callback);

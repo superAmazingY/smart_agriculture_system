@@ -92,6 +92,69 @@ void User::registerInfo(const HttpRequestPtr &req,
     }
 }
 
+//数据中心
+void User::getCenterData(const HttpRequestPtr &req,
+                         std::function<void(const HttpResponsePtr &)> &&callback,
+                         const std::string &name,const std::string &ph,const std::string &temperature,
+                         const std::string &humidity,const std::string &N,const std::string &P,const std::string &K,const std::string &date){
+    HttpResponsePtr resp;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto f = clientPtr->execSqlAsyncFuture("SELECT * FROM public.datacenter_value WHERE name = $1", name);
+    try {
+        auto r = f.get();
+        if (r.size() > 0) {
+            LOG_DEBUG << "数据：" << name << "已存在，无法添加";
+            Json::Value ret;
+            ret["result"] = "ok";
+            ret["data"] = "数据已存在";
+            resp = HttpResponse::newHttpJsonResponse(ret);
+        } else {
+            clientPtr->execSqlAsyncFuture("INSERT INTO public.datacenter_value(name,ph_value,temperature_value,"
+                                          "humidity_value,n_value,p_value,k_value,time)VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+                                          name,ph,temperature,humidity,N,P,K,date);
+            LOG_DEBUG << "数据:" << name << "添加成功";
+            Json::Value ret;
+            ret["result"] = "ok";
+            ret["data"] = "添加成功";
+            resp = HttpResponse::newHttpJsonResponse(ret);
+        }
+        callback(resp);
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
+
+//设备中心
+void User::getFacilityData(const HttpRequestPtr &req,
+                     std::function<void(const HttpResponsePtr &)> &&callback,
+                     const std::string &name,const std::string &info,const std::string &number,const std::string &date){
+    HttpResponsePtr resp;
+    auto clientPtr = drogon::app().getDbClient("default");
+    auto f = clientPtr->execSqlAsyncFuture("SELECT * FROM public.facilitycenter_value WHERE name = $1", name);
+    try {
+        auto r = f.get();
+        if (r.size() > 0) {
+            LOG_DEBUG << "数据：" << name << "已存在，无法添加";
+            Json::Value ret;
+            ret["result"] = "ok";
+            ret["data"] = "数据已存在";
+            resp = HttpResponse::newHttpJsonResponse(ret);
+        } else {
+            clientPtr->execSqlAsyncFuture("INSERT INTO public.facilitycenter_value(name,info,number,time)VALUES ($1,$2,$3,$4)",
+                                          name,info,number,date);
+            LOG_DEBUG << "数据:" << name << "添加成功";
+            Json::Value ret;
+            ret["result"] = "ok";
+            ret["data"] = "添加成功";
+            resp = HttpResponse::newHttpJsonResponse(ret);
+        }
+        callback(resp);
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
+
+
 
 //氮含量
 void  User::getNitrogenInfo(const HttpRequestPtr &req,

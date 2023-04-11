@@ -16,9 +16,7 @@
     <div class="container">
       <el-card class="el-card">
         <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-                  height="480" style="width: 100%" :row-style="getRowClass" 
-                  :header-row-style="getRowClass" 
-                  :header-cell-style="getRowClass">
+                  height="480" style="width: 100%">
           <el-table-column label="序号" prop="id"  width="100">
             <template slot-scope="scope">
               {{scope.$index+1}}

@@ -13,6 +13,7 @@
             </div>
             <el-switch
                 v-model="value1"
+                @change="toggleLed"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
                 active-text="打开"
@@ -191,6 +192,17 @@ export default {
       value9:true,
     }
   },
+  methods: {
+    toggleLed() {
+      this.$axios.post('http://172.20.10.6:5000/api/led/toggle', {
+        status: this.value1 ? 1 : 0
+      }).then(response => {
+        console.log(response.data);
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  }
 }
 </script>
 
