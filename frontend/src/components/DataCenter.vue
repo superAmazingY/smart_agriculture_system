@@ -111,19 +111,12 @@ export default {
     handleEdit(row){
       console.log(row);
     },
-    handleDelete(row){
-      console.log(row)
-    },
     handleApple(row){
       console.log(row)
     },
     //搜索按钮
     onSubmit(){
       console.log(this.brand);
-    },
-    //提交按钮
-    addBrand(){
-      console.log(this.formLabelAlign);
     },
     clearButton(){
       this.input1 = '';
@@ -132,6 +125,104 @@ export default {
     getTableData(){
       this.$axios.get("http://8.130.45.241:8099/user/datacenter").then(res=>{
         this.tableData = res.data;
+      })
+    },
+    //添加设备
+    addBrand(){
+      const name=this.formLabelAlign.name;
+      const PHvalue=this.formLabelAlign.PHvalue;
+      const Nvalue=this.formLabelAlign.Nvalue;
+      const Pvalue=this.formLabelAlign.Pvalue;
+      const Kvalue=this.formLabelAlign.Kvalue;
+      const temperatureValue=this.formLabelAlign.temperatureValue;
+      const humidityValue=this.formLabelAlign.humidityValue;
+      const date=this.getNowDate();
+      if(!name){
+        return this.$message({
+          type:"error",
+          message:"名称不能为空！",
+        });
+      }
+      if(!PHvalue){
+        return this.$message({
+          type:"error",
+          message:"PH值范围不能为空！",
+        });
+      }
+      if(!Nvalue){
+        return this.$message({
+          type:"error",
+          message:"氮含量范围不能为空！",
+        });
+      }
+      if(!Pvalue){
+        return this.$message({
+          type:"error",
+          message:"磷含量范围不能为空！",
+        });
+      }
+      if(!Kvalue){
+        return this.$message({
+          type:"error",
+          message:"钾含量范围不能为空！",
+        });
+      }
+      if(!temperatureValue){
+        return this.$message({
+          type:"error",
+          message:"温度范围不能为空！",
+        });
+      }
+      if(!humidityValue){
+        return this.$message({
+          type:"error",
+          message:"湿度范围不能为空！",
+        });
+      }
+      this.$axios.post(`http://8.130.45.241:8099/user/getCenterData?name=${name}&ph=${PHvalue}&temperature=${temperatureValue}&humidity=${humidityValue}&N=${Nvalue}&P=${Pvalue}&K=${Kvalue}&date=${date}`,
+      {}).then(res=>{
+        if(res.data.data === "添加成功"){
+                return this.$message({
+                  type:"success",
+                  message:"添加成功",
+                })
+              }
+        else{
+          return this.$message({
+            type:"error",
+            message:"添加失败",
+          })
+        }
+      })
+      this.dialogVisible = false;
+    },
+    //获取当前系统时间
+    getNowDate(){
+      const timeOne = new Date()
+      const year = timeOne.getFullYear()
+      let month = timeOne.getMonth() + 1
+      let day = timeOne.getDate()
+      month = month < 10 ? '0' + month : month
+      day = day < 10 ? '0' + day : day
+      return `${year}-${month}-${day}`
+    },
+    //删除设备
+    handleDelete(row){
+      console.log(row.name);
+      //const name=this.formLabelAlign.row.name;
+      this.$axios.post(`http://8.130.45.241:8099/user/deleteCenterData?name=${row.name}`,{})
+      .then(res=>{
+        if(res.data.data ==="删除成功"){
+          return this.$message({
+            type:"success",
+            message:"删除成功",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"删除异常",
+          })
+        }
       })
     }
   },

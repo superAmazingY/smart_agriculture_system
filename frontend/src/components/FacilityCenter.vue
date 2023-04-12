@@ -40,7 +40,9 @@
         </el-table>
       </el-card>
     </div>
-
+    //编辑弹窗
+  
+    //添加数据弹窗
     <el-dialog
         title="添加设备"
         :visible.sync="dialogVisible"
@@ -142,12 +144,30 @@ export default {
       day = day < 10 ? '0' + day : day
       return `${year}-${month}-${day}`
     },
-    handleEdit(row){
-      console.log(row);
-    },
+    //删除设备
     handleDelete(row){
       console.log(row.name);
+      //const name=this.formLabelAlign.row.name;
+      this.$axios.post(`http://8.130.45.241:8099/user/deleteFacilityData?name=${row.name}`,{})
+      .then(res=>{
+        if(res.data.data ==="删除成功"){
+          return this.$message({
+            type:"success",
+            message:"删除成功",
+          })
+        }else{
+          return this.$message({
+            type:"error",
+            message:"删除异常",
+          })
+        }
+      })
     },
+    handleEdit(row){
+      console.log(row);
+      this.$axios.post(`http://8.130.45.241:8099/user/editeFacilityData?olname=${row.name}&newname={row.name}`)
+    },
+   
     //搜索按钮
     onSubmit(){
       console.log(this.brand);
