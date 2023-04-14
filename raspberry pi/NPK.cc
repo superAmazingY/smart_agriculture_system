@@ -1,106 +1,100 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <curl/curl.h>
-#include <json-c/json.h>
+#include <json/json.h>
 
-#define BAUDRATE B9600
-#define MODEMDEVICE "/dev/ttyUSB0"
-#define _POSIX_SOURCE 1
 
-#define QUERY_DELAY 1000000
-#define MAX_QUERY_COUNT 10
+using namespace std;
 
-int main() {
-    int fd, res, query_count = 0;
-    struct termios oldtio, newtio;
-    unsigned char query[8] = {0x01, 0x03, 0x00, 0x1E, 0x00, 0x03, 0x65, 0xCD};
-    unsigned char response[8];
-    unsigned short nitrogen, phosphorus, potassium;
-
-    fd = open(MODEMDEVICE, O_RDWR | O_NOCTTY);
-    if (fd < 0) {
-        perror(MODEMDEVICE);
-        exit(1);
+int main()
+{
+    // 打开串口
+    int fd = open("/dev/ttyUSB1", O_RDWR | O_NOCTTY);
+    if (fd < 0)
+    {
+        cerr << "Failed to open serial port" << endl;
+        return -1;
     }
 
-    tcgetattr(fd, &oldtio);
+    // 配置串口参数
+    struct termios tty;
+    memset(&tty, 0, sizeof(tty));
+    cfsetospeed(&tty, B9600);
+    cfsetispeed(&tty, B9600);
+    tty.c_cflag |= (CLOCAL | CREAD);
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag &= ~PARENB;
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CRTSCTS;
+    tcsetattr(fd, TCSANOW, &tty);
 
-    bzero(&newtio, sizeof(newtio));
-    newtio.c_cflag = BAUDRATE | CS8 | CLOCAL | CREAD;
-    newtio.c_iflag = IGNPAR;
-    newtio.c_oflag = 0;
+    while (true)
+    {
+        // 发送问询帧
+        unsigned char buf[8] = {0x01, 0x03, 0x00, 0x1E, 0x00, 0x03, 0x65, 0xCD};
+        write(fd, buf, sizeof(buf));
 
-    tcflush(fd, TCIFLUSH);
-    tcsetattr(fd, TCSANOW, &newtio);
-
-    while (1) {
-        if (query_count == MAX_QUERY_COUNT) {
-            printf("Reached maximum query count, exiting program.\n");
-            break;
+        // 读取应答帧
+        unsigned char recv_buf[10] = {0};
+        int n = read(fd, recv_buf, sizeof(recv_buf));
+        if (n < 0)
+        {
+            cerr << "Failed to read from serial port" << endl;
+            return -1;
         }
 
-        res = write(fd, query, sizeof(query));
-        if (res != sizeof(query)) {
-            perror("write");
-            exit(1);
+        cout << "Received response frame: ";
+        for (int i = 0; i < sizeof(recv_buf); i++)
+        {
+            printf("%02X ", recv_buf[i]);
         }
+        cout << endl;
 
-        usleep(QUERY_DELAY);
 
-        res = read(fd, response, sizeof(response));
-        if (res != sizeof(response)) {
-            perror("read");
-            query_count++;
-            continue;
-        }
+        // 解析应答帧
+        int nitrogen = (recv_buf[3] << 8) | recv_buf[4];
+        int phosphorus = (recv_buf[5] << 8) | recv_buf[6];
+        int potassium = (recv_buf[7] << 8) | recv_buf[8];
+        cout << "Nitrogen concentration: " << nitrogen << "mg/kg" << endl;
+        cout << "Phosphorus concentration: " << phosphorus << "mg/kg" << endl;
+        cout << "Potassium concentration: " << potassium << "mg/kg" << endl;
 
-        nitrogen = (response[3] << 8) | response[4];
-        phosphorus = (response[5] << 8) | response[6];
-        potassium = (response[7] << 8) | response[8];
+        // 创建JSON对象并添加数据
+        Json::Value root;
+        root["nitrogen"] = nitrogen;
+        root["phosphorus"] = phosphorus;
+        root["potassium"] = potassium;
 
-        printf("Nitrogen: %d mg/kg\n", nitrogen);
-        printf("Phosphorus: %d mg/kg\n", phosphorus);
-        printf("Potassium: %d mg/kg\n", potassium);
-        printf("\n");
+        // 将JSON对象转换为字符串
+        std::string body = root.toStyledString();
 
-        // 将传感器数据转换为JSON格式
-        json_object *json_data = json_object_new_object();
-        json_object_object_add(json_data, "nitrogen", json_object_new_int(nitrogen));
-        json_object_object_add(json_data, "phosphorus", json_object_new_int(phosphorus));
-        json_object_object_add(json_data, "potassium", json_object_new_int(potassium));
-        const char *json_str = json_object_to_json_string(json_data);
-
-        //发送JSON数据到服务器
+        // 发送HTTP请求，将数据传输给服务器
         CURL *curl;
-        CURLcode res_curl;
-
+        CURLcode res;
         curl = curl_easy_init();
         if (curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, "http://8.130.45.241:8099/user/getNPK");
+            curl_easy_setopt(curl, CURLOPT_POST, 1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
             struct curl_slist *headers = NULL;
-            headers = curl_slist_append(headers, "Content-Type: application/json"); // set the content type to JSON
-            curl_easy_setopt(curl, CURLOPT_URL, "http://example.com/data"); // set the URL of the server
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_str); // set the data to be sent
+            headers = curl_slist_append(headers, "Content-Type: application/json"); // 设置HTTP请求头部为JSON格式
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            // perform the request
-            res_curl = curl_easy_perform(curl);
-            if (res_curl != CURLE_OK) {
-                fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_curl));
-            }
-
-            curl_slist_free_all(headers);
+            res = curl_easy_perform(curl);
+            if (res != CURLE_OK)
+                cerr << "Failed to send data to server" << endl;
             curl_easy_cleanup(curl);
+            curl_slist_free_all(headers);
         }
-
-        json_object_put(json_data);
-
-        query_count++;
+        // 休眠1秒钟
+        sleep(3);
     }
 
-    tcsetattr(fd, TCSANOW, &oldtio);
+    // 关闭串口
     close(fd);
 
     return 0;

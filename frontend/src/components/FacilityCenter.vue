@@ -2,12 +2,12 @@
   <div class="body">
     <div class="container">
       <el-card class="header">
-        <el-form :inline="true" :model="brand">
+        <el-form :inline="true" >
           <el-form-item label="" >
-            <el-input v-model="brand.equipmentName" placeholder="设备名称"   class="el-input_inner"></el-input>
+            <el-input type="text" v-model="search" placeholder="设备名称"  clearable class="el-input_inner"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit" class="el-button">搜索</el-button >
+            <el-button type="primary" class="el-button">搜索</el-button >
             <el-button icon="el-icon-delete" type="primary" @click="clearButton" class="el-button"></el-button>
           </el-form-item>
         </el-form>
@@ -29,7 +29,7 @@
           <el-table-column align="right">
             <template slot="header">
               <el-row>
-                <el-button type="text"  @click="dialogVisible=true">添加设备</el-button>
+                <el-button type="text"  @click="addData">添加设备</el-button>
               </el-row>
             </template>
             <template slot-scope="scope">
@@ -40,11 +40,10 @@
         </el-table>
       </el-card>
     </div>
-    //编辑弹窗
   
     //添加数据弹窗
     <el-dialog
-        title="添加设备"
+        :title="flag===1 ? '编辑设备' : '添加设备'"
         :visible.sync="dialogVisible"
         width="40%"
     >
@@ -59,8 +58,8 @@
           <el-input v-model="formLabelAlign.number"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="addBrand">立即创建</el-button>
-          <el-button @click="dialogVisible=false">取消</el-button>
+          <el-button type="primary" @click="addBrand">{{ flag===1 ? '确定修改' : '确定添加' }}</el-button>
+          <el-button @click="dialogVisible=false" >取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -74,8 +73,9 @@ export default {
     return {
       input1: '',
       input2: '',
+      oldname:'',
       dialogVisible: false,
-
+      flag:0,
       //弹窗的表单内容
       labelPosition: 'right',
       formLabelAlign: {
@@ -84,14 +84,16 @@ export default {
         number: '',
       },
       //搜索
-      brand:{
-        equipmentName:'',
-      },
+      search: '',
       tableData: [],
-      search: ''
+      
     }
   },
   methods: {
+    addData(){
+      this.dialogVisible=true;
+      this.flag = 0;
+    },
     //添加设备
     addBrand(){
       const name=this.formLabelAlign.name;
@@ -116,6 +118,25 @@ export default {
           message:"设备数量不能为空！",
         });
       }
+      if(this.flag === 1){
+        this.$axios.post(`http://8.130.45.241:8099/user/editFacilityData?oldname=${this.oldname}&newname=${name}&info=${info}&num=${number}&date=${date}`, {
+        }).then(res=>{
+              if(res.data.data === "修改成功"){
+                return this.$message({
+                  type:"success",
+                  message:"修改成功",
+                })
+              }
+              else{
+                return this.$message({
+                  type:"error",
+                  message:"修改失败",
+                })
+              }
+            }
+        )
+        this.flag = 0;
+      }else{
         this.$axios.post(`http://8.130.45.241:8099/user/getFacilityData?name=${name}&info=${info}&number=${number}&date=${date}`, {
         }).then(res=>{
               if(res.data.data === "添加成功"){
@@ -132,7 +153,11 @@ export default {
               }
             }
         )
+      }
       this.dialogVisible = false;
+      this.formLabelAlign.info = '';
+      this.formLabelAlign.name = '';
+      this.formLabelAlign.number = '';
     },
     //获取当前系统时间
     getNowDate(){
@@ -146,8 +171,6 @@ export default {
     },
     //删除设备
     handleDelete(row){
-      console.log(row.name);
-      //const name=this.formLabelAlign.row.name;
       this.$axios.post(`http://8.130.45.241:8099/user/deleteFacilityData?name=${row.name}`,{})
       .then(res=>{
         if(res.data.data ==="删除成功"){
@@ -164,18 +187,12 @@ export default {
       })
     },
     handleEdit(row){
-      console.log(row);
-      this.$axios.post(`http://8.130.45.241:8099/user/editeFacilityData?olname=${row.name}&newname={row.name}`)
+      this.oldname = row.name;
+      this.flag = 1;
+      this.dialogVisible = true;
     },
-   
-    //搜索按钮
-    onSubmit(){
-      console.log(this.brand);
-    },
-
     clearButton(){
-      this.input1 = '';
-      this.input2 = '';
+      this.search = '';
     },
     getTableData(){
       this.$axios.get("http://8.130.45.241:8099/user/facility").then(res=>{
@@ -211,7 +228,7 @@ export default {
   color:azure;
   .el-input_inner {
     width: 300px;
-    padding: 5px 15px;
+    padding: 5px 0px;
     float: left;
   }
 }

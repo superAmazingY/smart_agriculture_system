@@ -2,12 +2,12 @@
   <div class="body">
     <div class="container">
       <el-card class="header">
-        <el-form :inline="true" :model="brand">
+        <el-form :inline="true" >
           <el-form-item label="">
-            <el-input v-model="brand.equipmentName" placeholder="设备名称" class="el-input_inner"></el-input>
+            <el-input v-model="search" placeholder="设备名称" clearable class="el-input_inner"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit" class="el-button">搜索</el-button >
+            <el-button type="primary" class="el-button">搜索</el-button >
             <el-button icon="el-icon-delete" type="primary" @click="clearButton" class="el-button"></el-button>
           </el-form-item>
         </el-form>  
@@ -33,7 +33,7 @@
           <el-table-column align="right">
             <template slot="header">
               <el-row>
-                <el-button type="text"  @click="dialogVisible=true">添加数据</el-button>
+                <el-button type="text"  @click="addData" >添加数据</el-button>
               </el-row>
             </template>
             <template slot-scope="scope">
@@ -46,7 +46,7 @@
       </el-card>
     </div>
     <el-dialog
-        title="添加数据"
+        :title="flag===1 ? '编辑数据' : '添加数据'"
         :visible.sync="dialogVisible"
         width="40%"
     >
@@ -73,7 +73,7 @@
             <el-input v-model="formLabelAlign.Kvalue"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="addBrand">立即创建</el-button>
+            <el-button type="primary" @click="addBrand">{{ flag===1 ? '确定修改' : '确定添加' }}</el-button>
             <el-button @click="dialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -88,10 +88,8 @@ export default {
       input1: '',
       input2: '',
       dialogVisible: false,
-      //搜索
-      brand:{
-        equipmentName:'',
-      },
+      oldname:'',
+      flag: 0,
        //弹窗的表单内容
        labelPosition: 'right',
        formLabelAlign: {
@@ -104,23 +102,28 @@ export default {
         Kvalue: ''
       },
       tableData: [],
+      //搜索
       search: ''
     }
   },
   methods: {
+    addData(){
+      this.dialogVisible=true;
+      this.flag = 0;
+    },
     handleEdit(row){
-      console.log(row);
+      this.oldname = row.name;
+      this.flag = 1;
+      this.dialogVisible = true;
     },
     handleApple(row){
-      console.log(row)
-    },
-    //搜索按钮
-    onSubmit(){
-      console.log(this.brand);
+      return this.$message({
+          type:"success",
+          message:"应用成功！",
+        });
     },
     clearButton(){
-      this.input1 = '';
-      this.input2 = '';
+      this.search = '';
     },
     getTableData(){
       this.$axios.get("http://8.130.45.241:8099/user/datacenter").then(res=>{
@@ -179,22 +182,48 @@ export default {
           message:"湿度范围不能为空！",
         });
       }
-      this.$axios.post(`http://8.130.45.241:8099/user/getCenterData?name=${name}&ph=${PHvalue}&temperature=${temperatureValue}&humidity=${humidityValue}&N=${Nvalue}&P=${Pvalue}&K=${Kvalue}&date=${date}`,
-      {}).then(res=>{
-        if(res.data.data === "添加成功"){
-                return this.$message({
-                  type:"success",
-                  message:"添加成功",
-                })
-              }
-        else{
-          return this.$message({
-            type:"error",
-            message:"添加失败",
-          })
-        }
-      })
+      if(this.flag === 1){
+        this.$axios.post(`http://8.130.45.241:8099/user/editCenterData?oldname=${this.oldname}&newname=${name}&ph=${PHvalue}&temperature=${temperatureValue}&humidity=${humidityValue}&N=${Nvalue}&P=${Pvalue}&K=${Kvalue}&date=${date}`,
+            {}).then(res=>{
+          if(res.data.data === "修改失败"){
+            return this.$message({
+              type:"error",
+              message:"修改失败",
+            })
+          }
+          else{
+            return this.$message({
+              type:"success",
+              message:"修改成功",
+            })
+          }
+        })
+        this.flag = 0;
+      }else{
+        this.$axios.post(`http://8.130.45.241:8099/user/getCenterData?name=${name}&ph=${PHvalue}&temperature=${temperatureValue}&humidity=${humidityValue}&N=${Nvalue}&P=${Pvalue}&K=${Kvalue}&date=${date}`,
+            {}).then(res=>{
+          if(res.data.data === "添加成功"){
+            return this.$message({
+              type:"success",
+              message:"添加成功",
+            })
+          }
+          else{
+            return this.$message({
+              type:"error",
+              message:"添加失败",
+            })
+          }
+        })
+      }
       this.dialogVisible = false;
+      this.formLabelAlign.name = '';
+      this.formLabelAlign.PHvalue = '';
+      this.formLabelAlign.Nvalue='';
+      this.formLabelAlign.Pvalue='';
+      this.formLabelAlign.Kvalue='';
+      this.formLabelAlign.temperatureValue='';
+      this.formLabelAlign.humidityValue='';
     },
     //获取当前系统时间
     getNowDate(){
@@ -255,7 +284,7 @@ export default {
   background-color: rgba(17, 91, 151, 0.5);
   .el-input_inner {
     width: 300px;
-   padding: 5px 15px;
+   padding: 5px 0px;
    float: left;
   }
 }

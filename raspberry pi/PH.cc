@@ -1,94 +1,98 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <curl/curl.h>
-#include <json-c/json.h>
+#include <json/json.h>
 
-#define BAUDRATE B4800
-#define MODEMDEVICE "/dev/ttyUSB0"
-#define _POSIX_SOURCE 1
+using namespace std;
 
 int main() {
-
-    int fd, res;
-    struct termios oldtio, newtio;
-    unsigned char query[8] = {0x01, 0x03, 0x00, 0x1E, 0x00, 0x03, 0x65, 0xCD};
-    unsigned char response[8];
-    unsigned short nitrogen, phosphorus, potassium;
-
-    fd = open(MODEMDEVICE, O_RDWR | O_NOCTTY);
+    // 打开串口
+    int fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);
     if (fd < 0) {
-        perror(MODEMDEVICE);
-        exit(1);
+        cerr << "Failed to open serial port" << endl;
+        return -1;
     }
 
-    tcgetattr(fd, &oldtio); // 保存当前串口配置
+    // 配置串口参数
+    struct termios tty;
+    memset(&tty, 0, sizeof(tty));
+    cfsetospeed(&tty, B4800); // 设置波特率为4800
+    cfsetispeed(&tty, B4800);
+    tty.c_cflag |= (CLOCAL | CREAD);
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag &= ~PARENB;
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CRTSCTS;
+    tcsetattr(fd, TCSANOW, &tty);
 
-    bzero(&newtio, sizeof(newtio));
-    newtio.c_cflag = BAUDRATE | CS8 | CLOCAL | CREAD;
-    newtio.c_iflag = IGNPAR;
-    newtio.c_oflag = 0;
+    // 循环读取并打印数据
+    while (true) {
+        // 发送问询帧
+        unsigned char buf[8] = {0x01, 0x03, 0x00, 0x00, 0x00, 0x03, 0xC5, 0xC8};
+        write(fd, buf, sizeof(buf));
 
-    tcflush(fd, TCIFLUSH);
-    tcsetattr(fd, TCSANOW, &newtio); // 应用新的串口配置
-
-    while (1) // 循环打印数据
-    {
-        res = write(fd, query, sizeof(query));
-        if (res != sizeof(query)) {
-            perror("write");
-            exit(1);
+        // 读取应答帧
+        unsigned char recv_buf[8] = {0};
+        int n = read(fd, recv_buf, sizeof(recv_buf));
+        if (n < 0) {
+            cerr << "Failed to read from serial port" << endl;
+            return -1;
         }
 
-        usleep(50000); // 等待传感器响应
-
-        res = read(fd, response, sizeof(response));
-        if (res != sizeof(response)) {
-            perror("read");
-            exit(1);
+        cout << "Received response frame: ";
+        for (int i = 0; i < sizeof(recv_buf); i++)
+        {
+            printf("%02X ", recv_buf[i]);
         }
+        cout << endl;
+
+
+        // 解析应答帧
+        float moisture = (recv_buf[3] << 8) | recv_buf[4]; // 水分，应答帧中水分值所在位置为第4、5个字节
+        float temperature = (recv_buf[5] << 8) | recv_buf[6]; // 温度，应答帧中温度值所在位置为第6、7个字节
+        float ph = (recv_buf[7] << 8) | recv_buf[8]; // PH，应答帧中PH值所在位置为第8、9个字节
+
+        // 打印数据
+        cout << "Moisture: " << moisture / 10 << "%" << endl;
+        cout << "Temperature: " << temperature / 10 << "°C" << endl;
+        cout << "PH: " << ph / 10 << endl;
+
+        // 创建JSON对象并添加数据
+        Json::Value root;
+        root["moisture"] = moisture;
+        root["temperature"] = temperature;
+        root["ph"] = ph;
+
+        // 将JSON对象转换为字符串
+        std::string body = root.toStyledString();
+
+        // 发送HTTP请求，将数据传输给服务器
+        CURL *curl;
+        CURLcode res;
+        curl = curl_easy_init();
+        if (curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, "http://8.130.45.241:8099/user/getPH");
+            curl_easy_setopt(curl, CURLOPT_POST, 1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+            struct curl_slist *headers = NULL;
+            headers = curl_slist_append(headers, "Content-Type: application/json"); // 设置HTTP请求头部为JSON格式
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+            res = curl_easy_perform(curl);
+            if (res != CURLE_OK)
+                cerr << "Failed to send data to server" << endl;
+            curl_easy_cleanup(curl);
+            curl_slist_free_all(headers);
+        }
+        // 休眠1秒钟
+        sleep(3);
     }
+    // 关闭串口
+    close(fd);
 
-    // 读取传感器数据并转换为实际值
-    unsigned short raw_moisture = (response[3] << 8) | response[4];
-    float moisture = raw_moisture / 100.0;
-    unsigned short raw_temperature = (response[5] << 8) | response[6];
-    float temperature = raw_temperature / 100.0;
-    unsigned short raw_conductivity = (response[7] << 8) | response[8];
-    float conductivity = raw_conductivity / 10.0;
-    unsigned short raw_phvalue = (response[9] << 8) | response[10];
-    float phvalue = raw_phvalue / 100.0;
-
-    // 将传感器数据转换为JSON格式
-    struct json_object *jobj = json_object_new_object();
-    json_object_object_add(jobj, "moisture", json_object_new_double((double) moisture));
-    json_object_object_add(jobj, "temperature", json_object_new_double((double) temperature));
-    json_object_object_add(jobj, "conductivity", json_object_new_double((double) conductivity));
-    json_object_object_add(jobj, "phvalue", json_object_new_double((double) phvalue));
-    const char *json_str = json_object_to_json_string(jobj);
-
-    // 发送JSON数据到服务器
-    CURL *curl;
-    CURLcode res_curl;
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://example.com/data");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_str);
-        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, "Content-Type: application/json");
-        res_curl = curl_easy_perform(curl);
-        if (res_curl != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_curl));
-        }
-
-        curl_easy_cleanup(curl);
-        json_object_put(jobj);
-        tcsetattr(fd, TCSANOW, &oldtio); // 恢复原来的串口配置
-        close(fd);
-
-        return 0;
-    }
+    return 0;
 }

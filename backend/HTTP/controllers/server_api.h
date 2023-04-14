@@ -44,10 +44,20 @@ public:
         // URL: http://8.130.45.241:8099/user/editFacilityData?oldname={1}&newname={2}&info={3}&num={4}&date={5} (编辑设备中心API)
         METHOD_ADD(User::editCenterData, "editCenterData?oldname={1}&newname={2}&ph={3}&temperature={4}&humidity={5}&N={6}&P={7}&K={8}&date={9}", Post, Options);
         // URL: http://8.130.45.241:8099/user/editCenterData?oldname={1}&newname={2}&ph={3}&temperature={4}&humidity={5}&N={6}&P={7}&K={8}&date={9} (编辑数据中心API)
+        METHOD_ADD(User::getPH,"getPH",Post,Options);
+        //URL :http://8.130.45.241:8099/user/getPH
+        METHOD_ADD(User::getNPK,"getPH",Post,Options);
+        //URL :http://8.130.45.241:8099/user/getNPK
 
     METHOD_LIST_END
 
     // POST请求函数实现虚函数
+    void getPH(const HttpRequestPtr &req,
+                   std::function<void(const HttpResponsePtr &)> &&callback);
+
+    void getNPK(const HttpRequestPtr &req,
+               std::function<void(const HttpResponsePtr &)> &&callback);
+
     void loginInfo(const HttpRequestPtr &req,
                std::function<void(const HttpResponsePtr &)> &&callback,
                std::string &&userId,

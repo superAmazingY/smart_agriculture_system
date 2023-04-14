@@ -501,3 +501,63 @@ void User::editFacilityCenter(const HttpRequestPtr &req,
         LOG_ERROR << e.what();
     }
 }
+
+//获取PH、温度、湿度
+void User::getPH(const HttpRequestPtr &req,
+                 std::function<void(const HttpResponsePtr &)> &&callback) {
+    Json::Value ret;
+    ret["result"] = "success";
+    auto res = HttpResponse::newHttpJsonResponse(ret);
+    auto clientPtr = drogon::app().getDbClient("default");
+    try {
+        auto json = req->getJsonObject();
+
+        // 解析客户端发送过来的JSON数据
+        auto moisture = json->get("moisture", 0.0).asFloat();
+        auto temperature = json->get("temperature", 0.0).asFloat();
+        auto ph = json->get("ph", 0.0).asFloat();
+        // 获取当前系统时间
+        time_t now = time(nullptr);
+        char timeStr[32];
+        strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.ph_value(time, value,flag)VALUES ($1, $2,1)", timeStr,ph);
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.temperature_value(time, value,flag)VALUES ($1, $2,1)", timeStr,temperature);
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.humidity_value(time, value,flag)VALUES ($1, $2,1)", timeStr,moisture);
+
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
+
+//获取NPK
+void User::getNPK(const HttpRequestPtr &req,
+            std::function<void(const HttpResponsePtr &)> &&callback){
+    Json::Value ret;
+    ret["result"] = "success";
+    auto res = HttpResponse::newHttpJsonResponse(ret);
+    auto clientPtr = drogon::app().getDbClient("default");
+    try {
+        auto json = req->getJsonObject();
+
+        // 解析客户端发送过来的JSON数据
+        auto nitrogen = json->get("nitrogen", 0.0).asFloat();
+        auto phosphorus = json->get("phosphorus", 0.0).asFloat();
+        auto potassium = json->get("potassium", 0.0).asFloat();
+        // 获取当前系统时间
+        time_t now = time(nullptr);
+        char timeStr[32];
+        strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.n_value(time, value,flag)VALUES ($1, $2,1)", timeStr,nitrogen);
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.p_value(time, value,flag)VALUES ($1, $2,1)", timeStr,phosphorus);
+
+        clientPtr->execSqlAsyncFuture("INSERT INTO public.k_value(time, value,flag)VALUES ($1, $2,1)", timeStr,potassium);
+
+    } catch (const std::exception& e) {
+        LOG_ERROR << e.what();
+    }
+}
