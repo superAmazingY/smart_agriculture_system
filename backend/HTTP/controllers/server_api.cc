@@ -6,7 +6,6 @@ void User::loginInfo(const HttpRequestPtr &req,
                  std::string &&userId,
                  const std::string &password) {
     HttpResponsePtr resp;
-    //认证算法，读数据库，验证身份等...
     auto clientPtr = drogon::app().getDbClient("default");
     auto f = clientPtr->execSqlAsyncFuture("SELECT * FROM public.user WHERE username = $1 AND password = $2", userId, password);
     try {
@@ -138,8 +137,7 @@ void User::registerInfo(const HttpRequestPtr &req,
             ret["data"] = "用户名存在";
             resp = HttpResponse::newHttpJsonResponse(ret);
         } else {
-            clientPtr->execSqlAsyncFuture("INSERT INTO public.user(username, password)VALUES ($1, $2)", userId,
-                                          password);
+            clientPtr->execSqlAsyncFuture("INSERT INTO public.user(username, password)VALUES ($1, $2)", userId,password);
             LOG_DEBUG << "User " << userId << "注册成功";
             Json::Value ret;
             ret["result"] = "ok";
@@ -474,8 +472,8 @@ void User::editCenterData(const HttpRequestPtr &req,
 //编辑设备中心
 void User::editFacilityCenter(const HttpRequestPtr &req,
                               std::function<void(const HttpResponsePtr &)> &&callback,
-                              const std::string &oldname,
-                              const std::string &newname,const std::string &info,const std::string &num,const std::string &date){
+                              const std::string &oldname,const std::string &newname,const std::string &info,
+                              const std::string &num,const std::string &date){
     HttpResponsePtr resp;
     auto clientPtr = drogon::app().getDbClient("default");
     auto f = clientPtr->execSqlAsyncFuture("SELECT * FROM public.facilitycenter_value WHERE name = $1", oldname);
@@ -503,34 +501,57 @@ void User::editFacilityCenter(const HttpRequestPtr &req,
 }
 
 //获取PH、温度、湿度
-void User::getPH(const HttpRequestPtr &req,
-                 std::function<void(const HttpResponsePtr &)> &&callback) {
-    Json::Value ret;
-    ret["result"] = "success";
-    auto res = HttpResponse::newHttpJsonResponse(ret);
-    auto clientPtr = drogon::app().getDbClient("default");
-    try {
-        auto json = req->getJsonObject();
-
-        // 解析客户端发送过来的JSON数据
-        auto moisture = json->get("moisture", 0.0).asFloat();
-        auto temperature = json->get("temperature", 0.0).asFloat();
-        auto ph = json->get("ph", 0.0).asFloat();
-        // 获取当前系统时间
+void User::getPH(const HttpRequestPtr& req,
+                 std::function<void(const HttpResponsePtr&)>&& callback) {
+        Json::Value ret;
+        ret["result"] = "success";
+        auto res = HttpResponse::newHttpJsonResponse(ret);
         time_t now = time(nullptr);
         char timeStr[32];
         strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
+        try {
+            // 检查请求体是否为空或无效
+            if (!req->getBody().empty() && req->getContentType() == drogon::ContentType::CT_APPLICATION_JSON) {
+                auto json = req->getJsonObject();
 
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.ph_value(time, value,flag)VALUES ($1, $2,1)", timeStr,ph);
+                // 解析JSON数据
+                auto moisture = json->get("moisture", 0.0).asFloat();
+                auto temperature = json->get("temperature", 0.0).asFloat();
+                auto ph = json->get("ph", 0.0).asFloat();
 
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.temperature_value(time, value,flag)VALUES ($1, $2,1)", timeStr,temperature);
+                // 执行数据库操作并检查结果
+                auto clientPtr = drogon::app().getDbClient("default");
+                auto res1 = clientPtr->execSqlAsyncFuture("INSERT INTO public.ph_value(time, value,flag)VALUES ($1, $2,1)", timeStr, ph);
+                if (!res1.get().affectedRows()) {
+                    LOG_ERROR << "Failed to insert PH data into database";
+                    return;
+                }
 
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.humidity_value(time, value,flag)VALUES ($1, $2,1)", timeStr,moisture);
+                auto res2 = clientPtr->execSqlAsyncFuture("INSERT INTO public.temperature_value(time, value,flag)VALUES ($1, $2,1)", timeStr, temperature);
+                if (!res2.get().affectedRows()) {
+                    LOG_ERROR << "Failed to insert temperature data into database";
+                    return;
+                }
 
-    } catch (const std::exception& e) {
-        LOG_ERROR << e.what();
+                auto res3 = clientPtr->execSqlAsyncFuture("INSERT INTO public.humidity_value(time, value,flag)VALUES ($1, $2,1)", timeStr, moisture);
+                if (!res3.get().affectedRows()) {
+                    LOG_ERROR << "Failed to insert humidity data into database";
+                    return;
+                }
+
+                // 回调HTTP响应
+                callback(res);
+            } else {
+                LOG_ERROR << "Invalid JSON data received";
+            }
+        } catch (const std::exception& e) {
+            LOG_ERROR << e.what();
+        }
     }
-}
+
+
+
+
 
 //获取NPK
 void User::getNPK(const HttpRequestPtr &req,
@@ -538,25 +559,39 @@ void User::getNPK(const HttpRequestPtr &req,
     Json::Value ret;
     ret["result"] = "success";
     auto res = HttpResponse::newHttpJsonResponse(ret);
-    auto clientPtr = drogon::app().getDbClient("default");
+    time_t now = time(nullptr);
+    char timeStr[32];
+    strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
     try {
-        auto json = req->getJsonObject();
-
-        // 解析客户端发送过来的JSON数据
-        auto nitrogen = json->get("nitrogen", 0.0).asFloat();
-        auto phosphorus = json->get("phosphorus", 0.0).asFloat();
-        auto potassium = json->get("potassium", 0.0).asFloat();
-        // 获取当前系统时间
-        time_t now = time(nullptr);
-        char timeStr[32];
-        strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
-
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.n_value(time, value,flag)VALUES ($1, $2,1)", timeStr,nitrogen);
-
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.p_value(time, value,flag)VALUES ($1, $2,1)", timeStr,phosphorus);
-
-        clientPtr->execSqlAsyncFuture("INSERT INTO public.k_value(time, value,flag)VALUES ($1, $2,1)", timeStr,potassium);
-
+        // 检查请求体是否为空或无效
+        if (!req->getBody().empty() && req->getContentType() == drogon::ContentType::CT_APPLICATION_JSON) {
+            auto json = req->getJsonObject();
+            // 解析JSON数据
+            auto nitrogen = json->get("nitrogen", 0.0).asFloat();
+            auto phosphorus = json->get("phosphorus", 0.0).asFloat();
+            auto potassium = json->get("potassium", 0.0).asFloat();
+            // 执行数据库操作并检查结果
+            auto clientPtr = drogon::app().getDbClient("default");
+            auto res1 = clientPtr->execSqlAsyncFuture("INSERT INTO public.n_value(time, value,flag)VALUES ($1, $2,1)", timeStr, nitrogen);
+            if (!res1.get().affectedRows()) {
+                LOG_ERROR << "Failed to insert PH data into database";
+                return;
+            }
+            auto res2 = clientPtr->execSqlAsyncFuture("INSERT INTO public.p_value(time, value,flag)VALUES ($1, $2,1)", timeStr, phosphorus);
+            if (!res2.get().affectedRows()) {
+                LOG_ERROR << "Failed to insert temperature data into database";
+                return;
+            }
+            auto res3 = clientPtr->execSqlAsyncFuture("INSERT INTO public.k_value(time, value,flag)VALUES ($1, $2,1)", timeStr, potassium);
+            if (!res3.get().affectedRows()) {
+                LOG_ERROR << "Failed to insert humidity data into database";
+                return;
+            }
+            // 回调HTTP响应
+            callback(res);
+        } else {
+            LOG_ERROR << "Invalid JSON data received";
+        }
     } catch (const std::exception& e) {
         LOG_ERROR << e.what();
     }

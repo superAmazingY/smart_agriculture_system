@@ -7,7 +7,7 @@
             <div class="user">
               <img alt="" src="../assets/rice.jpg">
               <div class="userinfo">
-                <p class="name">智能农业管理</p>
+                <p class="name">智能大棚管理</p>
                 <p class="access">超级管理员</p>
               </div>
             </div>

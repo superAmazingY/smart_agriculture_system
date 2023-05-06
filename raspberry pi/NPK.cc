@@ -3,16 +3,17 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <cstdlib>
+#include <ctime>
 #include <curl/curl.h>
 #include <json/json.h>
-
 
 using namespace std;
 
 int main()
 {
     // 打开串口
-    int fd = open("/dev/ttyUSB1", O_RDWR | O_NOCTTY);
+   int fd = open("/dev/ttyUSB1", O_RDWR | O_NOCTTY);
     if (fd < 0)
     {
         cerr << "Failed to open serial port" << endl;
@@ -59,18 +60,20 @@ int main()
         int nitrogen = (recv_buf[3] << 8) | recv_buf[4];
         int phosphorus = (recv_buf[5] << 8) | recv_buf[6];
         int potassium = (recv_buf[7] << 8) | recv_buf[8];
-        cout << "Nitrogen concentration: " << nitrogen << "mg/kg" << endl;
-        cout << "Phosphorus concentration: " << phosphorus << "mg/kg" << endl;
-        cout << "Potassium concentration: " << potassium << "mg/kg" << endl;
+
+        // 打印数据
+        cout << "nitrogen: " << nitrogen <<"mg/kg" <<endl;
+        cout << "phosphorus: " << phosphorus<<"mg/kg" << endl;
+        cout << "potassium: " << potassium<<"mg/kg" << endl;
 
         // 创建JSON对象并添加数据
         Json::Value root;
         root["nitrogen"] = nitrogen;
         root["phosphorus"] = phosphorus;
         root["potassium"] = potassium;
-
         // 将JSON对象转换为字符串
-        std::string body = root.toStyledString();
+        Json::StreamWriterBuilder builder;
+        std::string body = Json::writeString(builder, root);
 
         // 发送HTTP请求，将数据传输给服务器
         CURL *curl;
@@ -79,7 +82,7 @@ int main()
         if (curl) {
             curl_easy_setopt(curl, CURLOPT_URL, "http://8.130.45.241:8099/user/getNPK");
             curl_easy_setopt(curl, CURLOPT_POST, 1L);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, -1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, body.length());
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
             struct curl_slist *headers = NULL;
             headers = curl_slist_append(headers, "Content-Type: application/json"); // 设置HTTP请求头部为JSON格式
@@ -90,8 +93,10 @@ int main()
             curl_easy_cleanup(curl);
             curl_slist_free_all(headers);
         }
+        std::cout<<std::endl;
+
         // 休眠1秒钟
-        sleep(3);
+        sleep(1);
     }
 
     // 关闭串口

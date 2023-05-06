@@ -1,10 +1,11 @@
+//HTML
 <template>
   <div class="body">
     <div class="container">
       <el-card class="header">
         <el-form :inline="true" >
           <el-form-item label="">
-            <el-input v-model="search" placeholder="设备名称" clearable class="el-input_inner"></el-input>
+            <el-input v-model="search" placeholder="数据名称" clearable class="el-input_inner"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" class="el-button">搜索</el-button >
@@ -321,8 +322,5 @@ export default {
   height: 40px;
   float: left;
 }
-
-
- 
- 
 </style>
+

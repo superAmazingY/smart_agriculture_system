@@ -7,7 +7,7 @@
               <img class="user" src="../assets/rice.jpg" alt="">
             </span>
         </div>
-        <h3 style="color:aliceblue">欢迎来到智慧农业检测系统</h3>
+        <h3 style="color:aliceblue">欢迎来到智慧大棚管理系统</h3>
       </el-card>
     </div>
       <div class="clear"></div>

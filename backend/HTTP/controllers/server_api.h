@@ -9,7 +9,7 @@ public:
     METHOD_LIST_BEGIN
         // use METHOD_ADD to add your custom processing function here;
         METHOD_ADD(User::loginInfo, "login?userId={1}&passwd={2}",Post,Options);
-    // url:  http://8.130.45.241:8099/user/login?userId={1}&passwd={2}(登录API)
+        // url:  http://8.130.45.241:8099/user/login?userId={1}&passwd={2}(登录API)
         METHOD_ADD(User::forgetPasswordInfo, "forgetPassword?userId={1}&passwd={2}",Post,Options);
         // url:  http://8.130.45.241:8099/user/forgetPassword?userId={1}&passwd={2}(忘记密码API)
         METHOD_ADD(User::registerInfo, "register?userId={1}&passwd={2}",Post,Options);
@@ -43,12 +43,11 @@ public:
         METHOD_ADD(User::editFacilityCenter, "editFacilityData?oldname={1}&newname={2}&info={3}&num={4}&date={5}", Post, Options);
         // URL: http://8.130.45.241:8099/user/editFacilityData?oldname={1}&newname={2}&info={3}&num={4}&date={5} (编辑设备中心API)
         METHOD_ADD(User::editCenterData, "editCenterData?oldname={1}&newname={2}&ph={3}&temperature={4}&humidity={5}&N={6}&P={7}&K={8}&date={9}", Post, Options);
-        // URL: http://8.130.45.241:8099/user/editCenterData?oldname={1}&newname={2}&ph={3}&temperature={4}&humidity={5}&N={6}&P={7}&K={8}&date={9} (编辑数据中心API)
+        //URL: http://8.130.45.241:8099/user/editCenterData?oldname={1}&newname={2}&ph={3}&temperature={4}&humidity={5}&N={6}&P={7}&K={8}&date={9} (编辑数据中心API)
         METHOD_ADD(User::getPH,"getPH",Post,Options);
         //URL :http://8.130.45.241:8099/user/getPH
-        METHOD_ADD(User::getNPK,"getPH",Post,Options);
+        METHOD_ADD(User::getNPK,"getNPK",Post,Options);
         //URL :http://8.130.45.241:8099/user/getNPK
-
     METHOD_LIST_END
 
     // POST请求函数实现虚函数
